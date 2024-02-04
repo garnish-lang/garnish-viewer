@@ -21,6 +21,7 @@ garnish_lang_runtime = { path = "../garnish-core/runtime"}
 garnish_lang_compiler = { path = "../garnish-core/compiler"}
 garnish_data = { path = "../garnish-core/data"}
 garnish_traits = { path = "../garnish-core/traits"}
+log = "0.4.20"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

@@ -820,6 +820,7 @@ dependencies = [
  "garnish_lang_runtime",
  "garnish_traits",
  "garnish_utils",
+ "log",
  "serde",
  "serde_garnish",
  "serde_json",
