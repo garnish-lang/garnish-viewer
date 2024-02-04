@@ -23,9 +23,9 @@ impl ViewerContext {
         self.expression_map.insert(name.into(), table_index);
     }
 
-    pub fn metadata(&self) -> &Vec<ExpressionBuildInfo> {
-        &self.build_metadata
-    }
+    // pub fn metadata(&self) -> &Vec<ExpressionBuildInfo> {
+    //     &self.build_metadata
+    // }
 
     pub fn metadata_mut(&mut self) -> &mut Vec<ExpressionBuildInfo> {
         &mut self.build_metadata
