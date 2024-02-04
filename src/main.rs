@@ -4,7 +4,7 @@
 mod context;
 
 use garnish_annotations_collector::{Collector, Sink, TokenBlock};
-use garnish_data::SimpleRuntimeData;
+use garnish_data::{SimpleRuntimeData, symbol_value};
 use garnish_lang_compiler::{build_with_data, InstructionMetadata, LexerToken, parse, ParseResult, TokenType};
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
 use garnish_traits::{EmptyContext, ExpressionDataType, GarnishLangRuntimeData, GarnishLangRuntimeState, GarnishRuntime};
@@ -110,6 +110,7 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
 
     context.metadata_mut().push(root_metadata);
 
+    runtime.get_data_mut().get_data_mut().insert_expression(index, symbol_value(&name));
     context.insert_expression(name, index);
 
     Ok(BuildInfo {
@@ -153,6 +154,7 @@ fn handle_def_annotations(
         });
 
         debug!("Found method: {}", name);
+        runtime.get_data_mut().get_data_mut().insert_expression(start, symbol_value(&name));
         context.insert_expression(name, start);
     }
 
@@ -201,6 +203,7 @@ fn handle_method_annotations(
         });
 
         let route = format!("{}@{}", name, name);
+        runtime.get_data_mut().get_data_mut().insert_expression(start, symbol_value(&name));
         context.insert_expression(route.clone(), jump_index);
     }
 
