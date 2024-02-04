@@ -851,6 +851,7 @@ dependencies = [
  "garnish_lang_runtime",
  "garnish_traits",
  "log",
+ "serde",
 ]
 
 [[package]]
