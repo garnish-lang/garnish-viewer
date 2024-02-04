@@ -9,10 +9,25 @@ async function greet() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form").addEventListener("submit", (e) => {
+  let statusBar = document.querySelector("#statusBar");
+
+  document.querySelector("#openBtn").addEventListener("click", (e) => {
     e.preventDefault();
-    greet();
+    statusBar.innerText = "Open";
+  });
+
+  document.querySelector("#newBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    statusBar.innerText = "New";
+  });
+
+  document.querySelector("#buildBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    statusBar.innerText = "Build";
+  });
+
+  document.querySelector("#saveBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    statusBar.innerText = "Save";
   });
 });

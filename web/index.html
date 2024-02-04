@@ -15,15 +15,15 @@
     <section class="flex-1 flex flex-col">
         <section class="flex-none px-2">
             <label>
-                <input type="text">
+                <input id="nameInput" type="text">
             </label>
-            <button>Open</button>
-            <button>New</button>
+            <button id="openBtn">Open</button>
+            <button id="newBtn">New</button>
         </section>
         <section class="flex-1 flex flex-row">
             <aside class="flex-none flex flex-col justify-center px-2">
-                <button>Build</button>
-                <button>Save</button>
+                <button id="buildBtn">Build</button>
+                <button id="saveBtn">Save</button>
             </aside>
             <textarea class="h-full w-full bg-indigo-500 resize-none"></textarea>
         </section>
@@ -32,5 +32,8 @@
 
     </section>
 </section>
+<footer class="flex-none px-2">
+    <p id="statusBar">Status</p>
+</footer>
 </body>
 </html>
