@@ -5,12 +5,20 @@ mod context;
 
 use garnish_annotations_collector::{Collector, Sink, TokenBlock};
 use garnish_data::SimpleRuntimeData;
-use garnish_lang_compiler::{build_with_data, InstructionMetadata, LexerToken, parse, ParseResult, TokenType};
+use garnish_lang_compiler::{build_with_data, InstructionMetadata, LexerToken, parse, ParseNode, ParseResult, TokenType};
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
 use garnish_traits::{EmptyContext, ExpressionDataType, GarnishLangRuntimeData, GarnishLangRuntimeState, GarnishRuntime};
 use garnish_utils::BuildMetadata;
 use log::{debug, error, warn};
-use crate::context::WebContext;
+use serde::{Deserialize, Serialize};
+use crate::context::ViewerContext;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct BuildInfo {
+    tokens: Vec<LexerToken>,
+    parse_nodes: Vec<ParseNode>,
+    instruction_metadata: Vec<InstructionMetadata>,
+}
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -29,7 +37,7 @@ fn build(name: &str, input: &str) -> String {
 fn build_input(name: &str, input: &str) -> Result<String, String> {
 
     let mut runtime = SimpleGarnishRuntime::new(SimpleRuntimeData::new());
-    let mut context = WebContext::new();
+    let mut context = ViewerContext::new();
 
     let collector: Collector = Collector::new(vec![
         Sink::new("@Method").until_token(TokenType::Subexpression),
@@ -107,7 +115,7 @@ fn build_input(name: &str, input: &str) -> Result<String, String> {
 fn handle_def_annotations(
     blocks: Vec<TokenBlock>,
     runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
-    context: &mut WebContext,
+    context: &mut ViewerContext,
     name: &String,
 ) -> Result<Vec<BuildMetadata<SimpleRuntimeData>>, String> {
     let mut builds = vec![];
@@ -148,7 +156,7 @@ fn handle_def_annotations(
 fn handle_method_annotations(
     blocks: Vec<TokenBlock>,
     runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
-    context: &mut WebContext,
+    context: &mut ViewerContext,
     name: &str,
 ) -> Result<Vec<BuildMetadata<SimpleRuntimeData>>, String> {
     let mut builds = vec![];

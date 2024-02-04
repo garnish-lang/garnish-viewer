@@ -4,12 +4,12 @@ use garnish_utils::{BuildMetadata, DataInfoProvider};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
-pub struct WebContext {
+pub struct ViewerContext {
     expression_map: HashMap<String, usize>,
     build_metadata: Vec<BuildMetadata<SimpleRuntimeData>>,
 }
 
-impl WebContext {
+impl ViewerContext {
     pub fn new() -> Self {
         Self {
             expression_map: HashMap::new(),
@@ -30,7 +30,7 @@ impl WebContext {
     }
 }
 
-impl GarnishLangRuntimeContext<SimpleRuntimeData> for WebContext {
+impl GarnishLangRuntimeContext<SimpleRuntimeData> for ViewerContext {
     fn resolve(
         &mut self,
         symbol: u64,
@@ -50,7 +50,7 @@ impl GarnishLangRuntimeContext<SimpleRuntimeData> for WebContext {
     }
 }
 
-impl DataInfoProvider<SimpleRuntimeData> for WebContext {
+impl DataInfoProvider<SimpleRuntimeData> for ViewerContext {
     fn get_symbol_name(&self, sym: u64, data: &SimpleRuntimeData) -> Option<String> {
         data.get_data().get_symbol(sym).cloned()
     }
