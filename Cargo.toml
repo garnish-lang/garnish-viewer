@@ -19,8 +19,8 @@ garnish_utils = { path = "../garnish-utils"}
 serde_garnish = { path = "../serde-garnish" }
 garnish_lang_runtime = { path = "../garnish-core/runtime"}
 garnish_lang_compiler = { path = "../garnish-core/compiler", features = ["serde"]}
-garnish_data = { path = "../garnish-core/data"}
-garnish_traits = { path = "../garnish-core/traits"}
+garnish_data = { path = "../garnish-core/data", features = ["serde"]}
+garnish_traits = { path = "../garnish-core/traits", features = ["serde"]}
 log = "0.4.20"
 
 [features]

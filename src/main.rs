@@ -18,6 +18,7 @@ struct BuildInfo {
     tokens: Vec<LexerToken>,
     parse_nodes: Vec<ParseNode>,
     instruction_metadata: Vec<InstructionMetadata>,
+    runtime_data: SimpleRuntimeData,
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command

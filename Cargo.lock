@@ -841,6 +841,7 @@ name = "garnish_data"
 version = "0.1.0"
 dependencies = [
  "garnish_traits",
+ "serde",
 ]
 
 [[package]]
@@ -865,6 +866,9 @@ dependencies = [
 [[package]]
 name = "garnish_traits"
 version = "0.0.1-alpha"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "garnish_utils"
