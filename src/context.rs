@@ -1,12 +1,14 @@
 use garnish_data::{DataError, SimpleRuntimeData};
 use garnish_traits::{GarnishLangRuntimeContext, GarnishLangRuntimeData, RuntimeError};
-use garnish_utils::{BuildMetadata, DataInfoProvider};
+use garnish_utils::{DataInfoProvider};
 use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+use crate::ExpressionBuildInfo;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ViewerContext {
     expression_map: HashMap<String, usize>,
-    build_metadata: Vec<BuildMetadata<SimpleRuntimeData>>,
+    build_metadata: Vec<ExpressionBuildInfo>,
 }
 
 impl ViewerContext {
@@ -21,11 +23,11 @@ impl ViewerContext {
         self.expression_map.insert(name.into(), table_index);
     }
 
-    pub fn metadata(&self) -> &Vec<BuildMetadata<SimpleRuntimeData>> {
+    pub fn metadata(&self) -> &Vec<ExpressionBuildInfo> {
         &self.build_metadata
     }
 
-    pub fn metadata_mut(&mut self) -> &mut Vec<BuildMetadata<SimpleRuntimeData>> {
+    pub fn metadata_mut(&mut self) -> &mut Vec<ExpressionBuildInfo> {
         &mut self.build_metadata
     }
 }

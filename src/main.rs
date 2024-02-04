@@ -15,10 +15,17 @@ use crate::context::ViewerContext;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct BuildInfo {
-    tokens: Vec<LexerToken>,
-    parse_nodes: Vec<ParseNode>,
-    instruction_metadata: Vec<InstructionMetadata>,
+    context: ViewerContext,
     runtime_data: SimpleRuntimeData,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ExpressionBuildInfo {
+    start: usize,
+    text: String,
+    tokens: Vec<LexerToken>,
+    parse_result: ParseResult,
+    instruction_metadata: Vec<InstructionMetadata>,
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -28,14 +35,11 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn build(name: &str, input: &str) -> String {
-    match build_input(name, input) {
-        Ok(s) => s,
-        Err(e) => e,
-    }
+fn build(name: &str, input: &str) -> Result<BuildInfo, String> {
+    build_input(name, input)
 }
 
-fn build_input(name: &str, input: &str) -> Result<String, String> {
+fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
 
     let mut runtime = SimpleGarnishRuntime::new(SimpleRuntimeData::new());
     let mut context = ViewerContext::new();
@@ -97,20 +101,22 @@ fn build_input(name: &str, input: &str) -> Result<String, String> {
         None => Err(format!("No jump point found after building {:?}", name))?,
     };
 
-    let root_metadata = BuildMetadata::new(
-        format!("{}", name),
-        source,
-        execution_start,
-        root_tokens,
-        parsed,
-        instruction_data,
-    );
+    let root_metadata = ExpressionBuildInfo {
+        start: execution_start,
+        text: source,
+        tokens: root_tokens.clone(),
+        parse_result: parsed,
+        instruction_metadata: instruction_data,
+    };
 
     context.metadata_mut().push(root_metadata);
 
     context.insert_expression(name, index);
 
-    Ok(String::new())
+    Ok(BuildInfo {
+        runtime_data: runtime.get_data().clone(),
+        context,
+    })
 }
 
 fn handle_def_annotations(
@@ -118,7 +124,7 @@ fn handle_def_annotations(
     runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
     context: &mut ViewerContext,
     name: &String,
-) -> Result<Vec<BuildMetadata<SimpleRuntimeData>>, String> {
+) -> Result<Vec<ExpressionBuildInfo>, String> {
     let mut builds = vec![];
 
     for def in blocks {
@@ -138,14 +144,14 @@ fn handle_def_annotations(
                 Ok(v) => v,
             };
 
-        builds.push(BuildMetadata::new(
-            format!("{}", name),
-            source,
+        builds.push(ExpressionBuildInfo {
             start,
-            def.tokens_owned(),
-            parsed,
-            instruction_data,
-        ));
+            text: source,
+            tokens: def.tokens().clone(),
+            parse_result: parsed,
+            instruction_metadata: instruction_data
+
+        });
 
         debug!("Found method: {}", name);
         context.insert_expression(name, start);
@@ -159,7 +165,7 @@ fn handle_method_annotations(
     runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
     context: &mut ViewerContext,
     name: &str,
-) -> Result<Vec<BuildMetadata<SimpleRuntimeData>>, String> {
+) -> Result<Vec<ExpressionBuildInfo>, String> {
     let mut builds = vec![];
 
     for method in blocks {
@@ -187,14 +193,13 @@ fn handle_method_annotations(
             Some(s) => s,
         };
 
-        builds.push(BuildMetadata::new(
-            format!("{}", name),
-            source,
+        builds.push(ExpressionBuildInfo {
             start,
-            method.tokens_owned(),
-            parsed,
-            instruction_data,
-        ));
+            text: source,
+            tokens: method.tokens().clone(),
+            parse_result: parsed,
+            instruction_metadata: instruction_data
+        });
 
         let route = format!("{}@{}", name, name);
         context.insert_expression(route.clone(), jump_index);
