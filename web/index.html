@@ -10,16 +10,27 @@
 </head>
 
 <body class="flex flex-col w-screen h-screen">
-<h1 class="flex-none">GV</h1>
+<!--<h1 class="flex-none">GV</h1>-->
 <section class="flex-1 flex flex-row">
-  <section class="flex-1">
-    <textarea class="h-full w-full bg-indigo-500">
+    <section class="flex-1 flex flex-col">
+        <section class="flex-none px-2">
+            <label>
+                <input type="text">
+            </label>
+            <button>Open</button>
+            <button>New</button>
+        </section>
+        <section class="flex-1 flex flex-row">
+            <aside class="flex-none flex flex-col justify-center px-2">
+                <button>Build</button>
+                <button>Save</button>
+            </aside>
+            <textarea class="h-full w-full bg-indigo-500 resize-none"></textarea>
+        </section>
+    </section>
+    <section class="flex-1 flex bg-sky-500">
 
-    </textarea>
-  </section>
-  <section class="flex-1 flex bg-sky-500">
-
-  </section>
+    </section>
 </section>
 </body>
 </html>
