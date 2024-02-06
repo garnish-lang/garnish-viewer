@@ -1,5 +1,6 @@
 use garnish_lang_compiler::{LexerToken, TokenType};
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct AnnotationParts<'a> {
     name_token: &'a LexerToken,
     expression: &'a [LexerToken],
@@ -11,6 +12,10 @@ fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts,
         .enumerate()
         .find(|(_i, t)| t.get_token_type() != TokenType::Whitespace)
         .ok_or("No name found for annotation")?;
+
+    if name_token.get_token_type() != TokenType::Identifier {
+        return Err("Invalid name for annotation".to_string());
+    }
 
     let expression = &tokens[(index + 1)..];
 
@@ -24,6 +29,18 @@ fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts,
 mod tests {
     use crate::compile::extract_annotation_parts;
     use garnish_lang_compiler::{LexerToken, TokenType};
+
+    #[test]
+    fn extract_parts_number_name() {
+        let tokens = vec![
+            LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
+            LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
+            LexerToken::new("+".to_string(), TokenType::PlusSign, 0, 0),
+            LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
+        ];
+
+        assert_eq!(extract_annotation_parts(&tokens), Err("Invalid name for annotation".to_string()));
+    }
 
     #[test]
     fn extract_parts_successful() {
