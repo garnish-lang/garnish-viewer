@@ -30,7 +30,7 @@ fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts,
 }
 
 #[cfg(test)]
-mod tests {
+mod annotations {
     use crate::compile::extract_annotation_parts;
     use garnish_lang_compiler::{LexerToken, TokenType};
 
