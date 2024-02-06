@@ -19,6 +19,10 @@ fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts,
 
     let expression = &tokens[(index + 1)..];
 
+    if expression.is_empty() {
+        return Err("No tokens in expression".to_string())
+    }
+
     Ok(AnnotationParts {
         name_token,
         expression,
@@ -29,6 +33,22 @@ fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts,
 mod tests {
     use crate::compile::extract_annotation_parts;
     use garnish_lang_compiler::{LexerToken, TokenType};
+
+    #[test]
+    fn empty_gives_error() {
+        let tokens = vec![];
+
+        assert_eq!(extract_annotation_parts(&tokens), Err("No name found for annotation".to_string()));
+    }
+
+    #[test]
+    fn no_expression_gives_error() {
+        let tokens = vec![
+            LexerToken::new("expr".to_string(), TokenType::Identifier, 0, 0),
+        ];
+
+        assert_eq!(extract_annotation_parts(&tokens), Err("No tokens in expression".to_string()));
+    }
 
     #[test]
     fn extract_parts_number_name() {
