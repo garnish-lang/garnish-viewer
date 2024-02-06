@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod context;
+mod compile;
 
 use garnish_annotations_collector::{Collector, Sink, TokenBlock};
 use garnish_data::{SimpleRuntimeData, symbol_value};

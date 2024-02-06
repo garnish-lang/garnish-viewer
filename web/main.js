@@ -1,12 +1,8 @@
 const {invoke} = window.__TAURI__.tauri;
 
-let greetInputEl;
-let greetMsgEl;
-
-async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    greetMsgEl.textContent = await invoke("greet", {name: greetInputEl.value});
-}
+let config = {
+    tabSize: 2
+};
 
 async function build() {
     let input = document.querySelector("#sourceInput").value;
@@ -38,4 +34,20 @@ window.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         statusBar.innerText = "Save";
     });
+
+    document.querySelector("#sourceInput").addEventListener("keydown", function(e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            let start = this.selectionStart;
+            let end = this.selectionEnd;
+
+            // set textarea value to: text before caret + tab + text after caret
+            this.value = this.value.substring(0, start) +
+                " ".repeat(config.tabSize) + this.value.substring(end);
+
+            // put caret at right position again
+            this.selectionStart =
+                this.selectionEnd = start + config.tabSize;
+        }
+    })
 });

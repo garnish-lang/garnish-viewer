@@ -5,35 +5,71 @@
     <link rel="stylesheet" href="styles.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Tauri App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="/main.js" defer></script>
 </head>
 
-<body class="flex flex-col w-screen h-screen">
-<!--<h1 class="flex-none">GV</h1>-->
-<section class="flex-1 flex flex-row">
-    <section class="flex-1 flex flex-col">
-        <section class="flex-none px-2">
-            <label>
-                <input id="nameInput" type="text">
-            </label>
-            <button id="openBtn">Open</button>
-            <button id="newBtn">New</button>
-        </section>
-        <section class="flex-1 flex flex-row">
-            <aside class="flex-none flex flex-col justify-center px-2">
-                <button id="buildBtn">Build</button>
-                <button id="saveBtn">Save</button>
-            </aside>
-            <textarea id="sourceInput" class="h-full w-full bg-indigo-500 resize-none"></textarea>
-        </section>
-    </section>
-    <section class="flex-1 flex bg-sky-500">
+<body class="">
+<section class="content">
 
+    <!--<h1 class="flex-none">GV</h1>-->
+    <section class="main">
+        <section class="input_container">
+            <section class="">
+                <div class="file_input">
+                    <label class="control">
+                        <input id="nameInput" class="input" type="text" placeholder="File name">
+                    </label>
+                    <button id="openBtn" class="button is-primary">Open</button>
+                    <button id="newBtn" class="button is-info">New</button>
+                </div>
+            </section>
+            <section class="sources">
+                <section class="source_container">
+                    <aside class="source_controls">
+                        <button id="buildBtn" class="">Build</button>
+                        <button id="saveBtn" class="">Save</button>
+                    </aside>
+                    <textarea id="sourceInput" class="code_edit"></textarea>
+                </section>
+            </section>
+        </section>
+        <section class="output_container">
+            <table class="">
+                <thead>
+                <tr>
+                    <td><abbr title="Address">Adr</abbr></td>
+                    <td><abbr title="Instruction">Inst</abbr></td>
+                    <td>Data</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>Put</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>Put</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>Put</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>Put</td>
+                    <td>1</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
     </section>
+    <footer class="status_bar">
+        <p id="statusBar">Status</p>
+    </footer>
 </section>
-<footer class="flex-none px-2">
-    <p id="statusBar">Status</p>
-</footer>
 </body>
 </html>
