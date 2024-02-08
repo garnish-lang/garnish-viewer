@@ -5,37 +5,68 @@ let config = {
 };
 
 async function build() {
-    let input = document.querySelector("#sourceInput").value;
-    let info = await invoke("build", {name: "default", input: input});
+    let input = document.querySelector("#sourceInput").value || "";
 
-    console.log(info);
+    try {
+        let info = await invoke("build", {name: "default", input: input});
+        console.log(info);
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+function query_document() {
+    let obj = {};
+
+    for (let name of [
+        "statusBar",
+        "openBtn",
+        "newBtn",
+        "buildBtn",
+        "saveBtn",
+        "sourceInput",
+        "lexBtn",
+        "parseBtn",
+        "buildOutputBtn",
+        "lexerTokensContainer",
+        "parserResultContainer",
+        "buildOutputContainer",
+    ]) {
+        Object.defineProperty(obj, name, {
+            value: document.querySelector(`#${name}`)
+        });
+    }
+
+    return obj;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    let statusBar = document.querySelector("#statusBar");
+    let elements = query_document();
 
-    document.querySelector("#openBtn").addEventListener("click", (e) => {
+    let statusBar = elements.statusBar;
+
+    elements.openBtn.addEventListener("click", (e) => {
         e.preventDefault();
         statusBar.innerText = "Open";
     });
 
-    document.querySelector("#newBtn").addEventListener("click", (e) => {
+    elements.newBtn.addEventListener("click", (e) => {
         e.preventDefault();
         statusBar.innerText = "New";
     });
 
-    document.querySelector("#buildBtn").addEventListener("click", (e) => {
+    elements.buildBtn.addEventListener("click", (e) => {
         e.preventDefault();
         statusBar.innerText = "Build";
         build();
     });
 
-    document.querySelector("#saveBtn").addEventListener("click", (e) => {
+    elements.saveBtn.addEventListener("click", (e) => {
         e.preventDefault();
         statusBar.innerText = "Save";
     });
 
-    document.querySelector("#sourceInput").addEventListener("keydown", function(e) {
+    elements.sourceInput.addEventListener("keydown", function(e) {
         if (e.key === "Tab") {
             e.preventDefault();
             let start = this.selectionStart;
@@ -49,5 +80,26 @@ window.addEventListener("DOMContentLoaded", () => {
             this.selectionStart =
                 this.selectionEnd = start + config.tabSize;
         }
-    })
+    });
+
+    elements.lexBtn.addEventListener("click", (e) => {
+        elements.lexerTokensContainer.style.display = "flex";
+        elements.parserResultContainer.style.display = "none";
+        elements.buildOutputContainer.style.display = "none";
+    });
+
+    elements.parseBtn.addEventListener("click", (e) => {
+        elements.lexerTokensContainer.style.display = "none";
+        elements.parserResultContainer.style.display = "flex";
+        elements.buildOutputContainer.style.display = "none";
+    });
+
+    elements.buildOutputBtn.addEventListener("click", (e) => {
+        elements.lexerTokensContainer.style.display = "none";
+        elements.parserResultContainer.style.display = "none";
+        elements.buildOutputContainer.style.display = "flex";
+    });
+
+    elements.parserResultContainer.style.display = "none";
+    elements.buildOutputContainer.style.display = "none";
 });

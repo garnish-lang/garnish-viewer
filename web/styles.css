@@ -121,8 +121,18 @@ button {
     font-family: Monospaced, monospace;
 }
 
-.main > .output_container {
+.output_container {
+    display: flex;
+    flex-direction: column;
+}
 
+.output_view {
+    display: flex;
+    flex-direction: column;
+}
+
+.output_view > section {
+    flex-grow: 1;
 }
 
 .status_bar {

@@ -34,37 +34,53 @@
             </section>
         </section>
         <section class="output_container">
-            <table class="">
-                <thead>
-                <tr>
-                    <td><abbr title="Address">Adr</abbr></td>
-                    <td><abbr title="Instruction">Inst</abbr></td>
-                    <td>Data</td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>0</td>
-                    <td>Put</td>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <td>0</td>
-                    <td>Put</td>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <td>0</td>
-                    <td>Put</td>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <td>0</td>
-                    <td>Put</td>
-                    <td>1</td>
-                </tr>
-                </tbody>
-            </table>
+            <nav>
+                <button id="lexBtn">Lexer Tokens</button>
+                <button id="parseBtn">Parse Result</button>
+                <button id="buildOutputBtn">Build Info</button>
+            </nav>
+            <section id="output_view">
+                <section id="lexerTokensContainer">
+                    <h1>Tokens</h1>
+                </section>
+                <section id="parserResultContainer">
+                    <h1>Parser</h1>
+                </section>
+                <section id="buildOutputContainer">
+                    <h1>Build</h1>
+                    <table class="instructionTable">
+                        <thead>
+                        <tr>
+                            <td><abbr title="Address">Adr</abbr></td>
+                            <td><abbr title="Instruction">Inst</abbr></td>
+                            <td>Data</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Put</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>Put</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>Put</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>Put</td>
+                            <td>1</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
         </section>
     </section>
     <footer class="status_bar">

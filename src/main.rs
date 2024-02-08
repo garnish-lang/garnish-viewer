@@ -8,9 +8,10 @@ use garnish_annotations_collector::{Collector, Sink, TokenBlock};
 use garnish_data::{SimpleRuntimeData, symbol_value};
 use garnish_lang_compiler::{build_with_data, InstructionMetadata, LexerToken, parse, ParseResult, TokenType};
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
-use garnish_traits::{EmptyContext, ExpressionDataType, GarnishLangRuntimeData, GarnishLangRuntimeState, GarnishRuntime};
-use log::{debug, error, warn};
+use garnish_traits::{GarnishLangRuntimeData, GarnishRuntime};
+use log::{debug, error};
 use serde::{Deserialize, Serialize};
+use crate::compile::extract_annotation_parts;
 use crate::context::ViewerContext;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,15 +29,12 @@ struct ExpressionBuildInfo {
     instruction_metadata: Vec<InstructionMetadata>,
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn build(name: &str, input: &str) -> Result<BuildInfo, String> {
-    build_input(name, input)
+fn build(name: Option<&str>, input: Option<&str>) -> Result<BuildInfo, String> {
+    match (name, input) {
+        (Some(name), Some(input)) => build_input(name, input),
+        _ => Err("Name and input required".to_string())
+    }
 }
 
 fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
@@ -45,7 +43,6 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
     let mut context = ViewerContext::new();
 
     let collector: Collector = Collector::new(vec![
-        Sink::new("@Method").until_token(TokenType::Subexpression),
         Sink::new("@Def").until_token(TokenType::Subexpression),
     ]);
 
@@ -55,21 +52,8 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
         .into_iter()
         .partition(|b| b.annotation_text().is_empty());
 
-    let (method_blocks, def_blocks): (Vec<_>, Vec<_>) = annotation_blocks
-        .into_iter()
-        .partition(|b| b.annotation_text() == &"@Method".to_string());
-
-    let mut method_metadata = handle_method_annotations(
-        method_blocks,
-        &mut runtime,
-        &mut context,
-        &name,
-    )?;
-
-    context.metadata_mut().append(&mut method_metadata);
-
     let mut def_metadata =
-        handle_def_annotations(def_blocks, &mut runtime, &mut context, &name.to_string())?;
+        handle_def_annotations(annotation_blocks, &mut runtime, &mut context, &name.to_string())?;
 
     context.metadata_mut().append(&mut def_metadata);
 
@@ -86,8 +70,7 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
 
     let parsed = parse(&root_tokens)?;
     if parsed.get_nodes().is_empty() {
-        debug!("No root script found in script. Skipping.");
-        return Err("Failed".to_string());
+        return Err("No node exist after parse".to_string());
     }
 
     let index = runtime.get_data().get_jump_table_len();
@@ -96,13 +79,9 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
         parsed.get_nodes().clone(),
         runtime.get_data_mut(),
     )?;
-    let execution_start = match runtime.get_data().get_jump_point(index) {
-        Some(i) => i,
-        None => Err(format!("No jump point found after building {:?}", name))?,
-    };
 
     let root_metadata = ExpressionBuildInfo {
-        start: execution_start,
+        start: index,
         text: source,
         tokens: root_tokens.clone(),
         parse_result: parsed,
@@ -136,8 +115,16 @@ fn handle_def_annotations(
             .collect::<Vec<String>>()
             .join("");
 
-        let (parsed, instruction_data, name, start) =
-            match build_and_get_parameters(def.tokens(), runtime, name) {
+        let annotation_parts = match extract_annotation_parts(def.tokens()) {
+            Ok(p) => p,
+            Err(e) => {
+                println!("Annotation Error: {:?}", e);
+                continue;
+            }
+        };
+
+        let (parsed, instruction_data, expression_index) =
+            match build_and_get_parameters(annotation_parts.expression, runtime) {
                 Err(s) => {
                     error!("{}", s);
                     continue;
@@ -146,7 +133,7 @@ fn handle_def_annotations(
             };
 
         builds.push(ExpressionBuildInfo {
-            start,
+            start: expression_index,
             text: source,
             tokens: def.tokens().clone(),
             parse_result: parsed,
@@ -155,70 +142,19 @@ fn handle_def_annotations(
         });
 
         debug!("Found method: {}", name);
-        runtime.get_data_mut().get_data_mut().insert_expression(start, symbol_value(&name));
-        context.insert_expression(name, start);
-    }
-
-    Ok(builds)
-}
-
-fn handle_method_annotations(
-    blocks: Vec<TokenBlock>,
-    runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
-    context: &mut ViewerContext,
-    name: &str,
-) -> Result<Vec<ExpressionBuildInfo>, String> {
-    let mut builds = vec![];
-
-    for method in blocks {
-        let source = method
-            .tokens()
-            .iter()
-            .map(|token| token.get_text().clone())
-            .collect::<Vec<String>>()
-            .join("");
-        let (parsed, instruction_data, name, jump_index) =
-            match build_and_get_parameters(method.tokens(), runtime, name) {
-                Err(_) => continue,
-                Ok(v) => v,
-            };
-
-        // http method expressions use direct jump point instead of jump table reference that is stored in the Expression data type
-        let start = match runtime.get_data().get_jump_point(jump_index) {
-            None => {
-                error!(
-                    "Jump table reference not found. Searching for {}",
-                    jump_index
-                );
-                return Err("Expression value not found in jump table".into());
-            }
-            Some(s) => s,
-        };
-
-        builds.push(ExpressionBuildInfo {
-            start,
-            text: source,
-            tokens: method.tokens().clone(),
-            parse_result: parsed,
-            instruction_metadata: instruction_data
-        });
-
-        let route = format!("{}@{}", name, name);
-        runtime.get_data_mut().get_data_mut().insert_expression(start, symbol_value(&name));
-        context.insert_expression(route.clone(), jump_index);
+        runtime.get_data_mut().get_data_mut().insert_expression(expression_index, symbol_value(&annotation_parts.name_token.get_text()));
+        context.insert_expression(annotation_parts.name_token.get_text(), expression_index);
     }
 
     Ok(builds)
 }
 
 fn build_and_get_parameters(
-    tokens: &Vec<LexerToken>,
+    tokens: &[LexerToken],
     runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
-    name: &str,
-) -> Result<(ParseResult, Vec<InstructionMetadata>, String, usize), String> {
-    let parsed = parse(tokens)?;
+) -> Result<(ParseResult, Vec<InstructionMetadata>, usize), String> {
+    let parsed = parse(&Vec::from(tokens))?;
     if parsed.get_nodes().is_empty() {
-        warn!("Empty method annotation in {:?}", &name);
         return Err("Empty annotation".into());
     }
 
@@ -228,164 +164,13 @@ fn build_and_get_parameters(
         parsed.get_nodes().clone(),
         runtime.get_data_mut(),
     )?;
-    let execution_start = match runtime.get_data().get_jump_point(index) {
-        Some(i) => i,
-        None => Err(format!("No jump point found after building {:?}", &name))?,
-    };
 
-    // executing from this start should result in list with annotation parameters
-    match runtime
-        .get_data_mut()
-        .set_instruction_cursor(execution_start)
-    {
-        Err(e) => {
-            error!(
-                "Failed to set instructor cursor during annotation build: {:?}",
-                e
-            );
-            return Err("Couldn't set cursor".into());
-        }
-        Ok(()) => (),
-    }
-
-    loop {
-        match runtime.execute_current_instruction::<EmptyContext>(None) {
-            Err(e) => {
-                error!("Failure during annotation execution: {:?}", e);
-                continue;
-            }
-            Ok(data) => match data.get_state() {
-                GarnishLangRuntimeState::Running => (),
-                GarnishLangRuntimeState::End => break,
-            },
-        }
-    }
-
-    let value_ref = match runtime.get_data().get_current_value() {
-        None => {
-            error!("No value after annotation execution. Expected value of type List.");
-            return Err("No value after execution".into());
-        }
-        Some(v) => v,
-    };
-
-    let (name, start) =
-        get_name_expression_annotation_parameters(runtime, value_ref).or(Err(String::new()))?;
-
-    Ok((parsed, instruction_data, name, start))
-}
-
-fn get_name_expression_annotation_parameters(
-    runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
-    value_ref: usize,
-) -> Result<(String, usize), ()> {
-    match runtime.get_data().get_data_type(value_ref) {
-        Err(_) => {
-            error!("Failed to retrieve value data type after annotation execution.");
-            Err(())
-        }
-        Ok(t) => match t {
-            ExpressionDataType::List => {
-                // check for 2 values in list
-                let method_name = match runtime.get_data().get_list_item(value_ref, 0.into()) {
-                    Err(e) => {
-                        error!(
-                            "Failed to retrieve list item 0 for annotation list value. {:?}",
-                            e
-                        );
-                        return Err(());
-                    }
-                    Ok(v) => match runtime.get_data().get_data_type(v) {
-                        Err(_) => {
-                            error!("Failed to retrieve value data type for annotation list value.");
-                            return Err(());
-                        }
-                        Ok(t) => match t {
-                            ExpressionDataType::Symbol => {
-                                match runtime.get_data().get_symbol(v) {
-                                    Err(_) => {
-                                        error!("No data found for annotation list value item 0");
-                                        return Err(());
-                                    }
-                                    Ok(s) => match runtime.get_data().get_symbols().get(&s) {
-                                        None => {
-                                            error!("Symbol with value {} not found in data symbol table", s);
-                                            return Err(());
-                                        }
-                                        Some(s) => s.clone(),
-                                    },
-                                }
-                            }
-                            ExpressionDataType::CharList => {
-                                match runtime.get_data().get_data().get(v) {
-                                    None => {
-                                        error!("No data found for annotation list value item 0");
-                                        return Err(());
-                                    }
-                                    Some(s) => match s.as_char_list() {
-                                        Err(e) => {
-                                            error!("Value stored in Character List slot {} could not be cast to Character List. {:?}", v, e);
-                                            return Err(());
-                                        }
-                                        Ok(s) => s,
-                                    },
-                                }
-                            }
-                            _ => {
-                                error!("Expected Character List or Symbol type as first parameter in annotation list value");
-                                return Err(());
-                            }
-                        },
-                    },
-                };
-
-                let execution_start = match runtime.get_data().get_list_item(value_ref, 1.into()) {
-                    Err(e) => {
-                        error!(
-                            "Failed to retrieve list item 1 for annotation list value. {:?}",
-                            e
-                        );
-                        return Err(());
-                    }
-                    Ok(v) => match runtime.get_data().get_data_type(v) {
-                        Err(_) => {
-                            error!("Failed to retrieve value data type for annotation list value.");
-                            return Err(());
-                        }
-                        Ok(t) => match t {
-                            ExpressionDataType::Expression => {
-                                match runtime.get_data().get_expression(v) {
-                                    Err(_) => {
-                                        error!("No data found for annotation list value item 0");
-                                        return Err(());
-                                    }
-                                    Ok(s) => s,
-                                }
-                            }
-                            _ => {
-                                error!("Expected Expression type as second parameter in annotation list value");
-                                return Err(());
-                            }
-                        },
-                    },
-                };
-
-                Ok((method_name, execution_start))
-            }
-            t => {
-                warn!(
-                    "Expected List data type after annotation execution. Found {:?}",
-                    t
-                );
-                Err(())
-            }
-        },
-    }
+    Ok((parsed, instruction_data, index))
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, build])
+        .invoke_handler(tauri::generate_handler![build])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

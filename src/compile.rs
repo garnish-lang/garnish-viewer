@@ -2,11 +2,11 @@ use garnish_lang_compiler::{LexerToken, TokenType};
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct AnnotationParts<'a> {
-    name_token: &'a LexerToken,
-    expression: &'a [LexerToken],
+    pub name_token: &'a LexerToken,
+    pub expression: &'a [LexerToken],
 }
 
-fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts, String> {
+pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationParts, String> {
     let (index, name_token) = tokens
         .iter()
         .enumerate()
