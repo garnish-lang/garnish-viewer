@@ -33,15 +33,20 @@
                 </section>
             </section>
         </section>
-        <section class="output_container">
+        <section class="flex_column flex_parent flex_child">
             <nav>
                 <button id="lexBtn">Lexer Tokens</button>
                 <button id="parseBtn">Parse Result</button>
                 <button id="buildOutputBtn">Build Info</button>
             </nav>
-            <section id="output_view">
-                <section id="lexerTokensContainer">
-                    <h1>Tokens</h1>
+            <section class="flex_parent flex_child">
+                <section id="lexerTokensContainer" class="flex_parent flex_child">
+                    <template id="lexerTokenTemplate">
+                        <span class="lexer_token flex_child" title="Unknown"></span>
+                    </template>
+                    <section id="lexerTokenList" class="container flex_parent flex_child">
+
+                    </section>
                 </section>
                 <section id="parserResultContainer">
                     <h1>Parser</h1>
@@ -52,7 +57,7 @@
                         <thead>
                         <tr>
                             <td><abbr title="Address">Adr</abbr></td>
-                            <td><abbr title="Instruction">Inst</abbr></td>
+                            <td><abbr title="Instruction">Ist</abbr></td>
                             <td>Data</td>
                         </tr>
                         </thead>

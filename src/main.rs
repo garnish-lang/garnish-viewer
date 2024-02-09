@@ -6,7 +6,7 @@ mod compile;
 
 use garnish_annotations_collector::{Collector, Sink, TokenBlock};
 use garnish_data::{SimpleRuntimeData, symbol_value};
-use garnish_lang_compiler::{build_with_data, InstructionMetadata, LexerToken, parse, ParseResult, TokenType};
+use garnish_lang_compiler::{build_with_data, InstructionMetadata, lex, LexerToken, parse, ParseResult, TokenType};
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
 use garnish_traits::{GarnishLangRuntimeData, GarnishRuntime};
 use log::{debug, error};
@@ -16,6 +16,7 @@ use crate::context::ViewerContext;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct BuildInfo {
+    all_lexer_tokens: Vec<LexerToken>,
     context: ViewerContext,
     runtime_data: SimpleRuntimeData,
 }
@@ -46,7 +47,8 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
         Sink::new("@Def").until_token(TokenType::Subexpression),
     ]);
 
-    let blocks: Vec<TokenBlock> = collector.collect_tokens(&input)?;
+    let tokens = lex(&input)?;
+    let blocks: Vec<TokenBlock> = collector.collect_tokens(&tokens)?;
 
     let (root_blocks, annotation_blocks): (Vec<TokenBlock>, Vec<TokenBlock>) = blocks
         .into_iter()
@@ -94,6 +96,7 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
     context.insert_expression(name, index);
 
     Ok(BuildInfo {
+        all_lexer_tokens: tokens,
         runtime_data: runtime.get_data().clone(),
         context,
     })

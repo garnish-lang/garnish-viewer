@@ -8,10 +8,10 @@ async function build() {
     let input = document.querySelector("#sourceInput").value || "";
 
     try {
-        let info = await invoke("build", {name: "default", input: input});
-        console.log(info);
+        return await invoke("build", {name: "default", input: input});
     }catch (e) {
         console.log(e);
+        return null;
     }
 }
 
@@ -31,6 +31,8 @@ function query_document() {
         "lexerTokensContainer",
         "parserResultContainer",
         "buildOutputContainer",
+        "lexerTokenList",
+        "lexerTokenTemplate",
     ]) {
         Object.defineProperty(obj, name, {
             value: document.querySelector(`#${name}`)
@@ -42,6 +44,7 @@ function query_document() {
 
 window.addEventListener("DOMContentLoaded", () => {
     let elements = query_document();
+    console.log(elements);
 
     let statusBar = elements.statusBar;
 
@@ -58,7 +61,34 @@ window.addEventListener("DOMContentLoaded", () => {
     elements.buildBtn.addEventListener("click", (e) => {
         e.preventDefault();
         statusBar.innerText = "Build";
-        build();
+        build().then((info) => {
+            console.log(elements.lexerTokenList.childNodes);
+
+            while (elements.lexerTokenList.firstElementChild) {
+                elements.lexerTokenList.removeChild(elements.lexerTokenList.firstElementChild);
+            }
+
+            for (let token of info.all_lexer_tokens) {
+                let item = elements.lexerTokenTemplate.content.cloneNode(true);
+                item.firstElementChild.setAttribute("title", token.token_type);
+
+                if (token.token_type === "Whitespace" || token.token_type === "Subexpression") {
+                    let s = [];
+                    for (let c of token.text) {
+                        if (c === " ") {
+                            s.push("&#x23B5");
+                        } else if (c === "\n") {
+                            s.push("&crarr;");
+                        }
+                    }
+                    item.firstElementChild.innerHTML = s.join("");
+                } else {
+                    item.firstElementChild.textContent = token.text;
+                }
+
+                elements.lexerTokenList.appendChild(item);
+            }
+        });
     });
 
     elements.saveBtn.addEventListener("click", (e) => {
