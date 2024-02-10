@@ -1,47 +1,32 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import InputToolbar from "./components/InputToolbar.vue";
+import ScriptEditor from "./components/ScriptEditor.vue";
+import TabView from "./components/TabView.vue";
+
+function buildScript(source: String) {
+  console.log(source);
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <section class="main">
+    <section class="flex_parent flex_column flex_child">
+      <section class="">
+        <InputToolbar/>
+      </section>
+      <section class="sources">
+        <ScriptEditor @build-press="buildScript"/>
+      </section>
+    </section>
+    <section class="flex_column flex_parent flex_child">
+        <TabView/>
+    </section>
+  </section>
+  <footer class="status_bar">
+    <p id="statusBar">Status</p>
+  </footer>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>

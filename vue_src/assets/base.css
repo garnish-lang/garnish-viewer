@@ -1,86 +1,296 @@
-/* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
-
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
-
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --font_size: 16px;
+  --font_color: #f0f0f0;
+  --back_color: #2b2d30;
+  --edit_color: #1e1f22;
+  --accent_color: #2b2d30;
+  --active_color: #707070;
+  --highlight_color: #4e4e4e;
+  --lexer_token_value_color: #007a6a;
+  --lexer_token_whitespace_color: #4f4f4f;
+  --lexer_token_operator_color: #118000;
+  --lexer_token_grouping_color: #6b0081;
+  --lexer_token_annotation_color: #806f00;
+  --lexer_token_unknown_color: #DD0000;
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
-
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
+  padding: 0;
 }
 
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  font-family:  sans-serif;
+  font-size: var(--font_size);
+  color: var(--font_color);
+  background-color: var(--back_color);
 }
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2.25rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+h4 {
+  font-size: 1.75rem;
+}
+
+h5 {
+  font-size: 1.5rem;
+}
+
+h6 {
+  font-size: 1.25rem;
+}
+
+input, textarea, button {
+  border: none;
+  outline: none;
+  font-size: var(--font_size);
+  color: var(--font_color);
+}
+
+button {
+  background-color: var(--back_color);
+}
+
+button:hover {
+  background-color: var(--highlight_color);
+}
+
+button:active {
+  background-color: var(--active_color);
+}
+
+input[type="text"], textarea {
+  background-color: var(--edit_color);
+  padding: .5rem 1rem;
+  line-height: 1.5;
+}
+
+button {
+  padding: .5rem 1rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex-grow: 1;
+}
+
+.main > section {
+  flex-grow: 1;
+}
+
+
+.file_input {
+  display: flex;
+}
+
+.file_input > label {
+  flex-grow: 3;
+}
+
+.file_input > label > input {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.file_input > button {
+
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.flex_column {
+  flex-direction: column;
+}
+
+.flex_row {
+  flex-direction: row;
+}
+
+.flex_parent {
+  display: flex;
+}
+
+.flex_wrap {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: start;
+  justify-content: flex-start;
+}
+
+.flex_child {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.size_50 {
+  height: 50%;
+}
+
+.status_bar {
+  padding: .5rem 1rem;
+}
+
+.container {
+  margin: .25rem;
+}
+
+.scrollable {
+  overflow-x: scroll;
+}
+
+.graph_container {
+
+}
+
+.lexer_token {
+  display: inline-block;
+  text-align: center;
+  padding: .5rem 1rem;
+  margin: 0 .25rem .5rem .25rem;
+  flex-basis: 0;
+}
+
+.lexer_token[title="Unknown"] {
+  background-color: var(--lexer_token_unknown_color);
+}
+
+.lexer_token[title="Value"],
+.lexer_token[title="Number"],
+.lexer_token[title="UnitLiteral"],
+.lexer_token[title="Value"],
+.lexer_token[title="Identifier"],
+.lexer_token[title="CharList"],
+.lexer_token[title="ByteList"],
+.lexer_token[title="Symbol"],
+.lexer_token[title="False"],
+.lexer_token[title="True"] {
+  background-color: var(--lexer_token_value_color);
+}
+
+.lexer_token[title="Whitespace"],
+.lexer_token[title="Subexpression"] {
+  background-color: var(--lexer_token_whitespace_color);
+  letter-spacing: .5rem;
+  padding: .5rem 1rem .5rem 1.5rem;
+}
+
+.lexer_token[title="StartExpression"],
+.lexer_token[title="EndExpression"],
+.lexer_token[title="StartGroup"],
+.lexer_token[title="EndGroup"],
+.lexer_token[title="StartSideEffect"],
+.lexer_token[title="EndSideEffect"] {
+  background-color: var(--lexer_token_grouping_color);
+}
+
+.lexer_token[title="PlusSign"],
+.lexer_token[title="Subtraction"],
+.lexer_token[title="Division"],
+.lexer_token[title="MultiplicationSign"],
+.lexer_token[title="ExponentialSign"],
+.lexer_token[title="IntegerDivision"],
+.lexer_token[title="Remainder"],
+.lexer_token[title="AbsoluteValue"],
+.lexer_token[title="Opposite"],
+.lexer_token[title="BitwiseNot"],
+.lexer_token[title="BitwiseAnd"],
+.lexer_token[title="BitwiseOr"],
+.lexer_token[title="BitwiseXor"],
+.lexer_token[title="BitwiseLeftShift"],
+.lexer_token[title="BitwiseRightShift"],
+.lexer_token[title="And"],
+.lexer_token[title="Or"],
+.lexer_token[title="Xor"],
+.lexer_token[title="Not"],
+.lexer_token[title="Comma"],
+.lexer_token[title="Apply"],
+.lexer_token[title="JumpIfFalse"],
+.lexer_token[title="JumpIfTrue"],
+.lexer_token[title="ElseJump"],
+.lexer_token[title="TypeOf"],
+.lexer_token[title="ApplyTo"],
+.lexer_token[title="Reapply"],
+.lexer_token[title="EmptyApply"],
+.lexer_token[title="TypeCast"],
+.lexer_token[title="TypeEqual"],
+.lexer_token[title="Equality"],
+.lexer_token[title="Inequality"],
+.lexer_token[title="LessThan"],
+.lexer_token[title="LessThanOrEqual"],
+.lexer_token[title="GreaterThan"],
+.lexer_token[title="GreaterThanOrEqual"],
+.lexer_token[title="Period"],
+.lexer_token[title="LeftInternal"],
+.lexer_token[title="RightInternal"],
+.lexer_token[title="LengthInternal"],
+.lexer_token[title="Pair"],
+.lexer_token[title="Concatenation"],
+.lexer_token[title="Range"],
+.lexer_token[title="StartExclusiveRange"],
+.lexer_token[title="EndExclusiveRange"],
+.lexer_token[title="ExclusiveRange"],
+.lexer_token[title="PrefixIdentifier"],
+.lexer_token[title="SuffixIdentifier"],
+.lexer_token[title="InfixIdentifier"] {
+  background-color: var(--lexer_token_operator_color);
+}
+
+
+.lexer_token[title="Annotation"],
+.lexer_token[title="LineAnnotation"] {
+  background-color: var(--lexer_token_annotation_color);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
