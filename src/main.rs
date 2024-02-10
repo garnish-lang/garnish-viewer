@@ -23,6 +23,7 @@ struct BuildInfo {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ExpressionBuildInfo {
+    name: String,
     start: usize,
     text: String,
     tokens: Vec<LexerToken>,
@@ -83,6 +84,7 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
     )?;
 
     let root_metadata = ExpressionBuildInfo {
+        name: name.to_string(),
         start: index,
         text: source,
         tokens: root_tokens.clone(),
@@ -136,9 +138,10 @@ fn handle_def_annotations(
             };
 
         builds.push(ExpressionBuildInfo {
+            name: annotation_parts.name_token.get_text().clone(),
             start: expression_index,
             text: source,
-            tokens: def.tokens().clone(),
+            tokens: Vec::from(annotation_parts.expression),
             parse_result: parsed,
             instruction_metadata: instruction_data
 

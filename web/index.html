@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Tauri App</title>
     <script type="module" src="/main.js" defer></script>
+    <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
 </head>
 
 <body class="">
@@ -13,7 +14,7 @@
 
     <!--<h1 class="flex-none">GV</h1>-->
     <section class="main">
-        <section class="input_container">
+        <section class="flex_parent flex_column flex_child">
             <section class="">
                 <div class="file_input">
                     <label class="control">
@@ -42,14 +43,21 @@
             <section class="flex_parent flex_child">
                 <section id="lexerTokensContainer" class="flex_parent flex_child">
                     <template id="lexerTokenTemplate">
-                        <span class="lexer_token flex_child" title="Unknown"></span>
+                        <span class="lexer_token" title="Unknown"></span>
                     </template>
-                    <section id="lexerTokenList" class="container flex_parent flex_child">
+                    <section id="lexerTokenList" class="container flex_parent flex_child flex_wrap">
 
                     </section>
                 </section>
-                <section id="parserResultContainer">
-                    <h1>Parser</h1>
+                <template id="parseTreeViewTemplate">
+                    <section class="flex_parent flex_column size_50 flex_child container">
+                        <h4 class="parse_name">Name</h4>
+                        <div class="graph_container flex_child">
+
+                        </div>
+                    </section>
+                </template>
+                <section id="parserResultContainer" class="flex_child flex_column scrollable">
                 </section>
                 <section id="buildOutputContainer">
                     <h1>Build</h1>

@@ -99,10 +99,6 @@ button {
     flex-grow: 1;
 }
 
-.main > .input_container {
-    display: flex;
-    flex-direction: column;
-}
 
 .file_input {
     display: flex;
@@ -163,6 +159,9 @@ button {
 
 .flex_parent {
     display: flex;
+}
+
+.flex_wrap {
     flex-wrap: wrap;
     align-items: flex-start;
     align-content: start;
@@ -174,6 +173,10 @@ button {
     flex-basis: 0;
 }
 
+.size_50 {
+    height: 50%;
+}
+
 .status_bar {
     padding: .5rem 1rem;
 }
@@ -182,11 +185,20 @@ button {
     margin: .25rem;
 }
 
+.scrollable {
+    overflow-x: scroll;
+}
+
+.graph_container {
+
+}
+
 .lexer_token {
     display: inline-block;
     text-align: center;
     padding: .5rem 1rem;
-    margin: 0 .25rem .5rem .25rem
+    margin: 0 .25rem .5rem .25rem;
+    flex-basis: 0;
 }
 
 .lexer_token[title="Unknown"] {
