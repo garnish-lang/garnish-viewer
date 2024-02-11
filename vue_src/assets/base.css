@@ -107,7 +107,11 @@ tr:nth-child(odd) {
 
 }
 
-tbody > tr:hover {
+tbody.highlight_row > tr:hover {
+    background-color: var(--highlight_color);
+}
+
+tbody.highlight_cell td:hover {
     background-color: var(--highlight_color);
 }
 

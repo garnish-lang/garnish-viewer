@@ -25,6 +25,10 @@ export const useGarnishStore = defineStore("garnish", () => {
     const sources = ref([""]);
     const activeOutputTab = ref<"lex" | "parse" | "build">("lex");
     const activeSource = ref(0);
+    const config = ref({
+        tabSize: 2,
+        buildDataRowWidth: 10,
+    });
 
     function buildSource(source: string) {
         console.log(`Building source`);
@@ -54,6 +58,7 @@ export const useGarnishStore = defineStore("garnish", () => {
     }
 
     return {
+        config,
         builds,
         file_input,
         sources,
