@@ -1,90 +1,121 @@
 :root {
-  --font_size: 16px;
-  --font_color: #f0f0f0;
-  --back_color: #2b2d30;
-  --edit_color: #1e1f22;
-  --accent_color: #2b2d30;
-  --active_color: #707070;
-  --highlight_color: #4e4e4e;
-  --lexer_token_value_color: #007a6a;
-  --lexer_token_whitespace_color: #4f4f4f;
-  --lexer_token_operator_color: #118000;
-  --lexer_token_grouping_color: #6b0081;
-  --lexer_token_annotation_color: #806f00;
-  --lexer_token_unknown_color: #DD0000;
+    --font_size: 16px;
+    --font_color: #f0f0f0;
+    --back_color: #2b2d30;
+    --edit_color: #1e1f22;
+    --accent_color: #383b3e;
+    --active_color: #707070;
+    --highlight_color: #4e4e4e;
+    --lexer_token_value_color: #007a6a;
+    --lexer_token_whitespace_color: #4f4f4f;
+    --lexer_token_operator_color: #118000;
+    --lexer_token_grouping_color: #6b0081;
+    --lexer_token_annotation_color: #806f00;
+    --lexer_token_unknown_color: #DD0000;
 }
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  font-family:  sans-serif;
-  font-size: var(--font_size);
-  color: var(--font_color);
-  background-color: var(--back_color);
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    font-family: sans-serif;
+    font-size: var(--font_size);
+    color: var(--font_color);
+    background-color: var(--back_color);
 }
 
 h1 {
-  font-size: 2.5rem;
+    font-size: 2.5rem;
 }
 
 h2 {
-  font-size: 2.25rem;
+    font-size: 2.25rem;
 }
 
 h3 {
-  font-size: 2rem;
+    font-size: 2rem;
 }
 
 h4 {
-  font-size: 1.75rem;
+    font-size: 1.75rem;
 }
 
 h5 {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
 }
 
 h6 {
-  font-size: 1.25rem;
+    font-size: 1.25rem;
 }
 
 input, textarea, button {
-  border: none;
-  outline: none;
-  font-size: var(--font_size);
-  color: var(--font_color);
+    border: none;
+    outline: none;
+    font-size: var(--font_size);
+    color: var(--font_color);
 }
 
 button {
-  background-color: var(--back_color);
-  padding: .5rem 1rem;
+    background-color: var(--back_color);
+    padding: .5rem 1rem;
 }
 
 button:hover {
-  background-color: var(--highlight_color);
+    background-color: var(--highlight_color);
 }
 
 button:active {
-  background-color: var(--active_color);
+    background-color: var(--active_color);
 }
 
 input[type="text"], textarea {
-  background-color: var(--edit_color);
-  padding: .5rem 1rem;
-  line-height: 1.5;
+    background-color: var(--edit_color);
+    padding: .5rem 1rem;
+    line-height: 1.5;
+}
+
+table {
+    border-collapse: collapse;
+    margin: .5rem;
+    border: .25rem solid var(--edit_color);
+}
+
+thead > tr > td {
+    background-color: var(--edit_color);
+    padding-bottom: .5rem;
+}
+
+tr, td {
+    border: none;
+}
+
+td {
+    padding: .4rem .5rem;
+}
+
+tr:nth-child(even) {
+    background-color: var(--accent_color);
+}
+
+tr:nth-child(odd) {
+
+}
+
+tbody > tr:hover {
+    background-color: var(--highlight_color);
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 

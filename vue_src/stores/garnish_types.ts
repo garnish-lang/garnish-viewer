@@ -35,8 +35,10 @@ export type RuntimeData = {
 }
 
 export type GarnishData = {
+    // keys are numbers in Rust
+    // converted to string for JS
     expression_to_symbol: { [key: string]: number };
-    symbol_to_name: { [key: string]: number };
+    symbol_to_name: { [key: string]: string };
     external_to_symbol: { [key: string]: number };
     list: (any | { Number: { Integer: number } })[]
 }
