@@ -3,15 +3,27 @@
 </script>
 
 <template>
-  <div class="file_input">
-    <label class="control">
-      <input id="nameInput" class="input" type="text" placeholder="File name">
+  <div>
+    <label>
+      <input id="nameInput" type="text" placeholder="File name">
     </label>
-    <button id="openBtn" class="button is-primary">Open</button>
-    <button id="newBtn" class="button is-info">New</button>
+    <button id="openBtn">Open</button>
+    <button id="newBtn">New</button>
   </div>
 </template>
 
 <style scoped>
+div {
+  display: flex;
+}
 
+label {
+  flex-grow: 3;
+}
+
+input {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -80,14 +80,35 @@ function makeChartConfig() {
 </script>
 
 <template>
-  <section v-for="build in builds" class="flex_parent flex_column size_50 flex_child container">
-    <h4 class="parse_name">Name</h4>
-    <div class="graph_container flex_child">
-      <ZingChartVue :data="makeChartConfig()" :series="makeChartNodes(build)"/>
-    </div>
+  <section class="root">
+    <section v-for="build in builds" class="graph_container">
+      <h4>{{ build.name }}</h4>
+      <div>
+        <ZingChartVue :data="makeChartConfig()" :series="makeChartNodes(build)"/>
+      </div>
+    </section>
   </section>
 </template>
 
 <style scoped>
+section.root {
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 0;
+  overflow-x: scroll;
+}
 
+.graph_container {
+  height: 50%;
+  margin: .25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.graph_container > div {
+  flex-grow: 1;
+  flex-basis: 0;
+}
 </style>

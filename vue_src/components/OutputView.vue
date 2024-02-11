@@ -11,23 +11,35 @@ const store = useGarnishStore();
 
 <template>
   <nav>
-    <button id="lexBtn" @click="store.setLexActive()">Lexer Tokens</button>
-    <button id="parseBtn" @click="store.setParseActive()">Parse Result</button>
-    <button id="buildOutputBtn" @click="store.setBuildActive()">Build Info</button>
+    <button @click="store.setLexActive()">Lexer Tokens</button>
+    <button @click="store.setParseActive()">Parse Result</button>
+    <button @click="store.setBuildActive()">Build Info</button>
   </nav>
-  <section class="flex_parent flex_child">
-    <section id="lexerTokensContainer" class="flex_parent flex_child" v-if="store.activeOutputTab === 'lex'">
+  <section class="tabs">
+    <section class="tab_container" v-if="store.activeOutputTab === 'lex'">
       <LexerView/>
     </section>
-    <section id="parserResultContainer" class="flex_child flex_column scrollable"  v-if="store.activeOutputTab === 'parse'">
+    <section class="tab_container" v-if="store.activeOutputTab === 'parse'">
       <ParserView/>
     </section>
-    <section id="buildOutputContainer"  v-if="store.activeOutputTab === 'build'">
+    <section class="tab_container" v-if="store.activeOutputTab === 'build'">
       <BuildView/>
     </section>
   </section>
 </template>
 
 <style scoped>
+
+.tabs {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.tab_container {
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+}
 
 </style>

@@ -9,24 +9,44 @@ function buildScript(source: String) {
 </script>
 
 <template>
-  <section class="main">
-    <section class="flex_parent flex_column flex_child">
-      <section class="">
+  <section class="root">
+    <section>
+      <section>
         <InputToolbar/>
       </section>
       <section class="sources">
         <ScriptEditor :index="0" @build-press="buildScript"/>
       </section>
     </section>
-    <section class="flex_column flex_parent flex_child">
+    <section>
         <OutputView/>
     </section>
   </section>
-  <footer class="status_bar">
-    <p id="statusBar">Status</p>
+  <footer>
+    <p>Status</p>
   </footer>
 </template>
 
 <style scoped>
+.root {
+  display: flex;
+  flex-grow: 1;
+}
 
+.root > section {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+footer {
+  padding: .5rem 1rem;
+}
 </style>
