@@ -61,48 +61,60 @@ function getExpressionName(addr: number) {
 </script>
 
 <template>
-  <section>
-    <table>
-      <thead>
-      <tr>
-        <td>Address</td>
-        <td>Instruction</td>
-        <td>Data</td>
-        <td>Start Of</td>
-      </tr>
-      </thead>
-      <tbody class="highlight_row">
-      <tr v-for="(instruction, index) in instructions">
-        <td>{{ index }}</td>
-        <td>{{ instruction.instruction }}</td>
-        <td>{{ instruction.data ? instruction.data : "" }}</td>
-        <td>{{ getExpressionName(index) }}</td>
-      </tr>
-      </tbody>
-    </table>
-    <table class="data">
-      <thead>
-      <tr>
-        <td>Data</td>
-        <td v-for="n in store.config.buildDataRowWidth">{{ n - 1 }}</td>
-      </tr>
-      </thead>
-      <tbody class="highlight_cell">
-      <tr v-for="(row, index) in dataRows">
-        <td>{{ index * store.config.buildDataRowWidth }}</td>
-        <td v-for="item in row">{{ item.data }}</td>
-      </tr>
-      </tbody>
-    </table>
+  <section class="root">
+    <section>
+
+    </section>
+    <section>
+      <table>
+        <thead>
+        <tr>
+          <td>Address</td>
+          <td>Instruction</td>
+          <td>Data</td>
+          <td>Start Of</td>
+        </tr>
+        </thead>
+        <tbody class="highlight_row">
+        <tr v-for="(instruction, index) in instructions">
+          <td>{{ index }}</td>
+          <td>{{ instruction.instruction }}</td>
+          <td>{{ instruction.data ? instruction.data : "" }}</td>
+          <td>{{ getExpressionName(index) }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <table class="data">
+        <thead>
+        <tr>
+          <td>Data</td>
+          <td v-for="n in store.config.buildDataRowWidth">{{ n - 1 }}</td>
+        </tr>
+        </thead>
+        <tbody class="highlight_cell">
+        <tr v-for="(row, index) in dataRows">
+          <td>{{ index * store.config.buildDataRowWidth }}</td>
+          <td v-for="item in row">{{ item.data }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
   </section>
 </template>
 
 <style scoped>
 
-section {
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.root > section {
+  flex-grow: 1;
   display: flex;
   align-content: start;
   align-items: start;
+  flex-basis: 0;
 }
 
 table {
