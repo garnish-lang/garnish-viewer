@@ -26,10 +26,6 @@ function makeText(token: LexerToken):string {
 </script>
 
 <template>
-
-  <template id="lexerTokenTemplate">
-    <span class="lexer_token" title="Unknown"></span>
-  </template>
   <section id="lexerTokenList" class="container flex_parent flex_child flex_wrap">
     <span v-for="token in activeTokens" class="lexer_token" :title="token.token_type">{{ makeText(token) }}</span>
   </section>
