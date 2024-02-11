@@ -21,9 +21,10 @@ async function build(input: string): Promise<BuildInfo | null> {
 
 export const useGarnishStore = defineStore("garnish", () => {
     const builds = ref<[BuildInfo]>([]);
-    let file_input = ref("");
-    let sources = ref([""]);
-    let activeOutputTab = ref<"lex" | "parse" | "build">("lex");
+    const file_input = ref("");
+    const sources = ref([""]);
+    const activeOutputTab = ref<"lex" | "parse" | "build">("lex");
+    const activeSource = ref(0);
 
     function buildSource(source: string) {
         console.log(`Building source`);
@@ -52,5 +53,5 @@ export const useGarnishStore = defineStore("garnish", () => {
         activeOutputTab.value = "build";
     }
 
-    return {builds, file_input, sources, buildSource, activeOutputTab, setLexActive, setParseActive, setBuildActive}
+    return {builds, file_input, sources, activeOutputTab, activeSource, buildSource, setLexActive, setParseActive, setBuildActive}
 })
