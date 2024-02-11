@@ -1,4 +1,5 @@
 export type BuildInfo = {
+    source_tokens: { [key: string]: LexerToken[]}
     all_lexer_tokens: LexerToken[],
     context: ViewerContext,
     runtime_data: RuntimeData,

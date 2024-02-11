@@ -2,6 +2,136 @@ import type {BuildInfo} from "./garnish_types";
 
 export const mockBuildData = () : BuildInfo => {
     return {
+        source_tokens: {
+            "default": [
+                {
+                    column: 0,
+                    row: 0,
+                    text: "@Def",
+                    token_type: "Annotation"
+                },
+                {
+                    column: 4,
+                    row: 0,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 5,
+                    row: 0,
+                    text: "add_5",
+                    token_type: "Identifier"
+                },
+                {
+                    column: 10,
+                    row: 0,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 11,
+                    row: 0,
+                    text: "$",
+                    token_type: "Value"
+                },
+                {
+                    column: 12,
+                    row: 0,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 13,
+                    row: 0,
+                    text: "+",
+                    token_type: "PlusSign"
+                },
+                {
+                    column: 14,
+                    row: 0,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 15,
+                    row: 0,
+                    text: "5",
+                    token_type: "Number"
+                },
+                {
+                    column: 16,
+                    row: 0,
+                    text: "\n\n",
+                    token_type: "Subexpression"
+                },
+                {
+                    column: 0,
+                    row: 2,
+                    text: "add_5",
+                    token_type: "Identifier"
+                },
+                {
+                    column: 5,
+                    row: 2,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 6,
+                    row: 2,
+                    text: "~",
+                    token_type: "Apply"
+                },
+                {
+                    column: 7,
+                    row: 2,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 8,
+                    row: 2,
+                    text: "10",
+                    token_type: "Number"
+                },
+                {
+                    column: 10,
+                    row: 2,
+                    text: "\n\n",
+                    token_type: "Subexpression"
+                },
+                {
+                    column: 0,
+                    row: 4,
+                    text: "10",
+                    token_type: "Number"
+                },
+                {
+                    column: 2,
+                    row: 4,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 3,
+                    row: 4,
+                    text: "$",
+                    token_type: "Value"
+                },
+                {
+                    column: 4,
+                    row: 4,
+                    text: " ",
+                    token_type: "Whitespace"
+                },
+                {
+                    column: 5,
+                    row: 4,
+                    text: "20",
+                    token_type: "Number"
+                }
+            ]
+        },
         all_lexer_tokens: [
             {
                 column: 0,
