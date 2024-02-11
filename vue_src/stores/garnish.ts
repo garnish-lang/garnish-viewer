@@ -30,10 +30,8 @@ export const useGarnishStore = defineStore("garnish", () => {
         buildDataRowWidth: 10,
     });
 
-    function buildSource(source: string) {
-        console.log(`Building source`);
-        console.log(source);
-        build(source).then((info: BuildInfo) => {
+    function buildSource(index: number) {
+        build(sources[index]).then((info: BuildInfo) => {
             if (info) {
                 console.log(info);
                 builds.value.push(info)
@@ -64,6 +62,7 @@ export const useGarnishStore = defineStore("garnish", () => {
         sources,
         activeOutputTab,
         activeSource,
+        updateSource,
         buildSource,
         setLexActive,
         setParseActive,

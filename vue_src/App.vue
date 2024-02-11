@@ -15,7 +15,7 @@ function buildScript(source: String) {
         <InputToolbar/>
       </section>
       <section class="sources">
-        <ScriptEditor :index="0" @build-press="buildScript"/>
+        <ScriptEditor :source-index="0" @build-press="buildScript"/>
       </section>
     </section>
     <section>

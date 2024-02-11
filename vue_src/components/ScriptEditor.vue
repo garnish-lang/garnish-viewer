@@ -2,17 +2,12 @@
 import {ref} from "vue";
 import {useGarnishStore} from "../stores/garnish";
 
-const emit = defineEmits(["buildPress"]);
 const store = useGarnishStore();
 const props = defineProps<{
-  index: number
+  sourceIndex: number
 }>();
 
-const sourceArea = ref<HTMLTextAreaElement | null>(null);
-
-let config = {
-  tabSize: 2,
-}
+const source = ref("");
 
 function handleKeyDown(e: KeyboardEvent) {
   let ele: HTMLTextAreaElement = e.target as HTMLTextAreaElement;
@@ -22,17 +17,23 @@ function handleKeyDown(e: KeyboardEvent) {
     let end = ele.selectionEnd;
 
     // set textarea value to: text before caret + tab + text after caret
-    ele.value = ele.value.substring(0, start) +
-        " ".repeat(config.tabSize) + ele.value.substring(end);
+    source.value = source.value.substring(0, start) +
+        " ".repeat(store.config.tabSize) + source.value.substring(end);
 
     // put caret at right position again
     ele.selectionStart =
-        ele.selectionEnd = start + config.tabSize;
+        ele.selectionEnd = start + store.config.tabSize;
+
+    handleInput(e);
   }
 }
 
+function handleInput(e: Event) {
+  store.updateSource(props.sourceIndex, source.value);
+}
+
 function build() {
-  store.buildSource(sourceArea.value!.value);
+  store.buildSource(props.sourceIndex);
 }
 </script>
 
@@ -42,7 +43,7 @@ function build() {
       <button id="buildBtn" @click="build">Build</button>
       <button id="saveBtn" class="">Save</button>
     </aside>
-    <textarea ref="sourceArea" @keydown="handleKeyDown"></textarea>
+    <textarea v-model="source" @keydown="handleKeyDown" @input="handleInput"></textarea>
   </section>
 </template>
 
