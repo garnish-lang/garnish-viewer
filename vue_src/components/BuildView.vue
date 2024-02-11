@@ -3,7 +3,6 @@
 </script>
 
 <template>
-
   <h1>Build</h1>
   <table class="instructionTable">
     <thead>

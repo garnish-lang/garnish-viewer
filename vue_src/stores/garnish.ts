@@ -53,5 +53,15 @@ export const useGarnishStore = defineStore("garnish", () => {
         activeOutputTab.value = "build";
     }
 
-    return {builds, file_input, sources, activeOutputTab, activeSource, buildSource, setLexActive, setParseActive, setBuildActive}
+    return {
+        builds,
+        file_input,
+        sources,
+        activeOutputTab,
+        activeSource,
+        buildSource,
+        setLexActive,
+        setParseActive,
+        setBuildActive
+    }
 })
