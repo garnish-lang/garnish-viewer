@@ -5,7 +5,7 @@ export type BuildInfo = {
 }
 
 export type ViewerContext = {
-    expression_map: {[key: string]: number},
+    expression_map: { [key: string]: number },
     build_metadata: ExpressionBuildInfo[],
 }
 
@@ -17,7 +17,6 @@ export type ExpressionBuildInfo = {
     parse_result: ParseResult,
     instruction_metadata: InstructionMetadata[],
 }
-
 
 export type RuntimeData = {
     register: number[],
@@ -31,14 +30,14 @@ export type RuntimeData = {
     current_list: [number[], number[]] | null,
     current_char_list: string | null,
     current_byte_list: [] | null,
-    cache: {[key: string]: number},
+    cache: { [key: string]: number },
     max_char_list_depth: number,
 }
 
 export type GarnishData = {
     expression_to_symbol: { [key: string]: number };
-    symbol_to_name: {[key: string]: number};
-    external_to_symbol: {[key: string]: number};
+    symbol_to_name: { [key: string]: number };
+    external_to_symbol: { [key: string]: number };
     list: (any | { Number: { Integer: number } })[]
 }
 
