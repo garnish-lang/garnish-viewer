@@ -241,7 +241,7 @@ fn get_execution_build(state: tauri::State<AppState>) -> Option<BuildInfo> {
 fn main() {
     tauri::Builder::default()
         .manage(AppState { base_build: Mutex::new(None) })
-        .invoke_handler(tauri::generate_handler![build])
+        .invoke_handler(tauri::generate_handler![build, initialize_execution, get_execution_build])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

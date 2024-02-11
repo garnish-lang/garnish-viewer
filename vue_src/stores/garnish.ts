@@ -5,7 +5,7 @@ import type {BuildInfo} from "./garnish_types";
 import {mockBuildData} from "./mock_data";
 
 
-async function build(input: string): Promise<BuildInfo | null> {
+async function garnishBuild(input: string): Promise<BuildInfo | null> {
     if (window.__TAURI_IPC__) {
         try {
             return await invoke("build", {name: "default", input: input});
@@ -19,8 +19,31 @@ async function build(input: string): Promise<BuildInfo | null> {
     return mockBuildData();
 }
 
+async function garnishInitializeExecution(): Promise<void> {
+    if (window.__TAURI_IPC__) {
+        try {
+            return await invoke("initialize_execution");
+        } catch (e) {
+            console.log(e);
+            return;
+        }
+    }
+}
+
+async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
+    if (window.__TAURI_IPC__) {
+        try {
+            return await invoke("get_execution_build");
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+}
+
 export const useGarnishStore = defineStore("garnish", () => {
-    const builds = ref<[BuildInfo]>([]);
+    const builds = ref<BuildInfo[]>([]);
+    const executionBuild = ref<BuildInfo | null>(null);
     const file_input = ref("");
     const sources = ref([""]);
     const activeOutputTab = ref<"lex" | "parse" | "build">("build");
@@ -31,10 +54,24 @@ export const useGarnishStore = defineStore("garnish", () => {
     });
 
     function buildSource(index: number) {
-        build(sources[index]).then((info: BuildInfo) => {
+        garnishBuild(sources[index]).then((info: BuildInfo) => {
             if (info) {
                 console.log(info);
                 builds.value.push(info)
+            }
+        });
+    }
+
+    function initializeExecution() {
+        garnishInitializeExecution().then(() => {
+            console.log("Execution initialized");
+        });
+    }
+
+    function getExecutionBuild() {
+        garnishGetExecutionBuild().then((info: BuildInfo) => {
+            if (info) {
+                executionBuild.value = info;
             }
         });
     }
