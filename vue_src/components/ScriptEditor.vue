@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import {useGarnishStore} from "../stores/garnish";
 
 const emit = defineEmits(["buildPress"]);
+const store = useGarnishStore();
+const props = defineProps<{
+  index: number
+}>();
 
 const sourceArea = ref<HTMLTextAreaElement | null>(null);
 
@@ -27,7 +32,7 @@ function handleKeyDown(e: KeyboardEvent) {
 }
 
 function build() {
-  emit("buildPress", sourceArea.value ? sourceArea.value!.value : "");
+  store.buildSource(sourceArea.value!.value);
 }
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputToolbar from "./components/InputToolbar.vue";
 import ScriptEditor from "./components/ScriptEditor.vue";
-import TabView from "./components/TabView.vue";
+import OutputView from "./components/OutputView.vue";
 
 function buildScript(source: String) {
   console.log(source);
@@ -15,11 +15,11 @@ function buildScript(source: String) {
         <InputToolbar/>
       </section>
       <section class="sources">
-        <ScriptEditor @build-press="buildScript"/>
+        <ScriptEditor :index="0" @build-press="buildScript"/>
       </section>
     </section>
     <section class="flex_column flex_parent flex_child">
-        <TabView/>
+        <OutputView/>
     </section>
   </section>
   <footer class="status_bar">
