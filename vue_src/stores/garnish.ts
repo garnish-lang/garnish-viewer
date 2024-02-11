@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
-import { invoke } from '@tauri-apps/api'
+import {invoke} from '@tauri-apps/api'
 import type {BuildInfo} from "./garnish_types";
 import {mockBuildData} from "./mock_data";
 
@@ -9,7 +9,7 @@ async function build(input: string): Promise<BuildInfo | null> {
     if (window.__TAURI_IPC__) {
         try {
             return await invoke("build", {name: "default", input: input});
-        }catch (e) {
+        } catch (e) {
             console.log(e);
             return null;
         }
@@ -23,6 +23,7 @@ export const useGarnishStore = defineStore("garnish", () => {
     const builds = ref<[BuildInfo]>([]);
     let file_input = ref("");
     let sources = ref([""]);
+    let activeOutputTab = ref<"lex" | "parse" | "build">("lex");
 
     function buildSource(source: string) {
         console.log(`Building source`);
@@ -39,5 +40,17 @@ export const useGarnishStore = defineStore("garnish", () => {
         sources.value[index] = source;
     }
 
-    return { builds, file_input, sources, buildSource, updateSource }
+    function setLexActive() {
+        activeOutputTab.value = "lex";
+    }
+
+    function setParseActive() {
+        activeOutputTab.value = "parse";
+    }
+
+    function setBuildActive() {
+        activeOutputTab.value = "build";
+    }
+
+    return {builds, file_input, sources, buildSource, activeOutputTab, setLexActive, setParseActive, setBuildActive}
 })
