@@ -86,6 +86,10 @@ table {
     border: .25rem solid var(--edit_color);
 }
 
+thead {
+    text-align: center;
+}
+
 thead > tr > td {
     background-color: var(--edit_color);
     padding-bottom: .5rem;
