@@ -211,7 +211,7 @@ fn build_and_get_parameters(
 fn initialize_execution(
     sources: Vec<SourceInfo>,
     state: tauri::State<AppState>,
-) -> Result<(), String> {
+) -> Result<BuildInfo, String> {
     let mut source_tokens = HashMap::new();
     let mut runtime = SimpleGarnishRuntime::new(SimpleRuntimeData::new());
     let mut context = ViewerContext::new();
@@ -223,14 +223,16 @@ fn initialize_execution(
         );
     }
 
-    *state.base_build.lock().unwrap() = Some(BuildInfo {
+    let info = BuildInfo {
         source_tokens,
         all_lexer_tokens: vec![],
         runtime_data: runtime.get_data().clone(),
         context,
-    });
+    };
 
-    Ok(())
+    *state.base_build.lock().unwrap() = Some(info.clone());
+
+    Ok(info)
 }
 
 #[tauri::command]

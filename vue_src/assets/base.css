@@ -95,20 +95,28 @@ thead > tr > td {
     padding-bottom: .5rem;
 }
 
-tr, td {
+th {
+    background-color: var(--back_color);
+}
+
+tbody th {
+    font-weight: normal;
+    background-color: var(--edit_color);
+}
+
+tr, td, th {
     border: none;
 }
 
-td {
+td, th {
     padding: .4rem .5rem;
 }
 
 tr:nth-child(even) {
-    background-color: var(--accent_color);
 }
 
 tr:nth-child(odd) {
-
+    background-color: var(--accent_color);
 }
 
 tbody.highlight_row > tr:hover {

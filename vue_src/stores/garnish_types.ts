@@ -30,7 +30,7 @@ export type RuntimeData = {
     jump_path: number[],
     current_list: [number[], number[]] | null,
     current_char_list: string | null,
-    current_byte_list: [] | null,
+    current_byte_list: number[] | null,
     cache: { [key: string]: number },
     max_char_list_depth: number,
 }

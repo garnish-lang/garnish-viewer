@@ -19,15 +19,18 @@ async function garnishBuild(input: string): Promise<BuildInfo | null> {
     return mockBuildData();
 }
 
-async function garnishInitializeExecution(): Promise<void> {
+async function garnishInitializeExecution(): Promise<BuildInfo | null> {
     if (window.__TAURI_IPC__) {
         try {
             return await invoke("initialize_execution");
         } catch (e) {
             console.log(e);
-            return;
+            return null;
         }
     }
+
+    // Mock data for working in browser for debugging with Vue
+    return mockBuildData();
 }
 
 async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
@@ -39,6 +42,9 @@ async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
             return null;
         }
     }
+
+    // Mock data for working in browser for debugging with Vue
+    return mockBuildData();
 }
 
 export const useGarnishStore = defineStore("garnish", () => {
@@ -63,14 +69,18 @@ export const useGarnishStore = defineStore("garnish", () => {
     }
 
     function initializeExecution() {
-        garnishInitializeExecution().then(() => {
-            console.log("Execution initialized");
+        garnishInitializeExecution().then((info: BuildInfo) => {
+            if (info) {
+                console.log(info);
+                executionBuild.value = info;
+            }
         });
     }
 
     function getExecutionBuild() {
         garnishGetExecutionBuild().then((info: BuildInfo) => {
             if (info) {
+                console.log(info);
                 executionBuild.value = info;
             }
         });
@@ -95,6 +105,7 @@ export const useGarnishStore = defineStore("garnish", () => {
     return {
         config,
         builds,
+        executionBuild,
         file_input,
         sources,
         activeOutputTab,
@@ -103,6 +114,8 @@ export const useGarnishStore = defineStore("garnish", () => {
         buildSource,
         setLexActive,
         setParseActive,
-        setBuildActive
+        setBuildActive,
+        initializeExecution,
+        getExecutionBuild
     }
 })
