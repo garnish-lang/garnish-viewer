@@ -16,6 +16,7 @@ use garnish_traits::{GarnishLangRuntimeData, GarnishRuntime};
 use log::{debug, error};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::ops::Deref;
 use std::sync::Mutex;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -36,14 +37,21 @@ struct ExpressionBuildInfo {
     instruction_metadata: Vec<InstructionMetadata>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SourceInfo {
     name: String,
     text: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ExecutionInfo {
+    context: ViewerContext,
+    runtime: SimpleGarnishRuntime<SimpleRuntimeData>,
+}
+
 struct AppState {
     base_build: Mutex<Option<BuildInfo>>,
+    current_execution: Mutex<Option<ExecutionInfo>>,
 }
 
 #[tauri::command]
@@ -240,10 +248,86 @@ fn get_execution_build(state: tauri::State<AppState>) -> Option<BuildInfo> {
     state.base_build.lock().unwrap().clone()
 }
 
+#[tauri::command]
+fn start_execution(
+    expression_name: String,
+    input_expression: String,
+    state: tauri::State<AppState>,
+) -> Result<ExecutionInfo, String> {
+    match state
+        .base_build
+        .lock()
+        .or(Err("Could not lock base build.".to_string()))?
+        .deref()
+    {
+        Some(build) => {
+            let mut current_execution = build.clone();
+            let start_instruction = current_execution
+                .context
+                .get_expression_index(&expression_name)
+                .and_then(|index| current_execution.runtime_data.get_jump_point(index))
+                .ok_or(format!("Expression \"{}\" not found.", expression_name))?;
+
+            current_execution
+                .runtime_data
+                .set_instruction_cursor(start_instruction)?;
+
+            current_execution
+                .runtime_data
+                .push_value_stack(0)?;
+
+            let info = ExecutionInfo {
+                context: current_execution.context,
+                runtime: SimpleGarnishRuntime::new(current_execution.runtime_data),
+            };
+
+            *state.current_execution.lock().unwrap() = Some(info.clone());
+
+            Ok(ExecutionInfo {
+                context: info.context,
+                runtime: SimpleGarnishRuntime::new(info.runtime.get_data().clone()),
+            })
+        }
+        None => Err("Create base build by calling initialize_execution first.".to_string()),
+    }
+}
+
+#[tauri::command]
+fn continue_execution(state: tauri::State<AppState>) -> Result<ExecutionInfo, String> {
+    state
+        .current_execution
+        .lock()
+        .or(Err("Could not lock base build.".to_string()))?
+        .as_mut()
+        .map(|exec| {
+            let mut context = exec.context.clone();
+
+            match exec.runtime.execute_current_instruction(Some(&mut context)) {
+                Err(e) => Err(e.to_string()),
+                Ok(_info) => Ok(ExecutionInfo {
+                    context,
+                    runtime: exec.runtime.clone(),
+                }),
+            }
+        })
+        .unwrap_or(Err(
+            "No current execution. Call start_execution first.".to_string()
+        ))
+}
+
 fn main() {
     tauri::Builder::default()
-        .manage(AppState { base_build: Mutex::new(None) })
-        .invoke_handler(tauri::generate_handler![build, initialize_execution, get_execution_build])
+        .manage(AppState {
+            base_build: Mutex::new(None),
+            current_execution: Mutex::new(None),
+        })
+        .invoke_handler(tauri::generate_handler![
+            build,
+            initialize_execution,
+            get_execution_build,
+            start_execution,
+            continue_execution,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

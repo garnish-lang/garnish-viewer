@@ -10,11 +10,11 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
         return data;
     }
 
-    if (data["Number"]) {
+    if (exists(data["Number"])) {
         return data["Number"]["Integer"] ? data["Number"]["Integer"] : data["Number"]["Float"]
     }
 
-    if (data["Symbol"]) {
+    if (exists(data["Symbol"])) {
         let sym = data["Symbol"];
 
         // current Garnish runtime uses u64 for symbol values
@@ -30,5 +30,21 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
         return buildInfo.runtime_data.data.symbol_to_name[sym.toString()];
     }
 
+    if (exists(data["Expression"])) {
+        let expr = data["Expression"];
+
+        return `Expr ${expr}`
+    }
+
+    if (exists(data["List"])) {
+        let list = data["List"];
+
+        return `List ${list[0].length}, ${list[1].length}`
+    }
+
     return JSON.stringify(data);
+}
+
+function exists(v: any): boolean {
+    return typeof v !== "undefined" && v !== null;
 }

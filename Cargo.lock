@@ -861,6 +861,7 @@ version = "0.0.1-alpha"
 dependencies = [
  "garnish_traits",
  "log",
+ "serde",
 ]
 
 [[package]]

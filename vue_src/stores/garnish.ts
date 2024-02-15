@@ -1,14 +1,14 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
 import {invoke} from '@tauri-apps/api'
-import type {BuildInfo} from "./garnish_types";
-import {mockBuildData} from "./mock_data";
+import type {BuildInfo, ExecutionInfo, SourceInfo} from "./garnish_types";
+import {mockBuildData, mockExecutionData} from "./mock_data";
 
 
-async function garnishBuild(input: string): Promise<BuildInfo | null> {
+async function tauriInvokeOr<T>(cmd: string, mock_data: T, args: any = undefined): Promise<T | null> {
     if (window.__TAURI_IPC__) {
         try {
-            return await invoke("build", {name: "default", input: input});
+            return await invoke(cmd, args);
         } catch (e) {
             console.log(e);
             return null;
@@ -16,35 +16,31 @@ async function garnishBuild(input: string): Promise<BuildInfo | null> {
     }
 
     // Mock data for working in browser for debugging with Vue
-    return mockBuildData();
+    return mock_data;
 }
 
-async function garnishInitializeExecution(): Promise<BuildInfo | null> {
-    if (window.__TAURI_IPC__) {
-        try {
-            return await invoke("initialize_execution");
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
-    }
+async function garnishBuild(input: string): Promise<BuildInfo | null> {
+    return await tauriInvokeOr("build", mockBuildData(), {name: "default", input: input});
+}
 
-    // Mock data for working in browser for debugging with Vue
-    return mockBuildData();
+async function garnishInitializeExecution(sources: SourceInfo[]): Promise<BuildInfo | null> {
+    return await tauriInvokeOr("initialize_execution", mockBuildData(), {sources: sources});
 }
 
 async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
-    if (window.__TAURI_IPC__) {
-        try {
-            return await invoke("get_execution_build");
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
-    }
+    return await tauriInvokeOr("get_execution_build", mockBuildData());
+}
 
-    // Mock data for working in browser for debugging with Vue
-    return mockBuildData();
+async function garnishStartExecution(startExpression: string, input: string): Promise<ExecutionInfo | null> {
+    console.log(startExpression, input)
+    return await tauriInvokeOr("start_execution", mockExecutionData(), {
+        expressionName: startExpression,
+        inputExpression: input
+    });
+}
+
+async function garnishContinueExecution(): Promise<ExecutionInfo | null> {
+    return await tauriInvokeOr("continue_execution", mockExecutionData());
 }
 
 export const useGarnishStore = defineStore("garnish", () => {
@@ -58,6 +54,8 @@ export const useGarnishStore = defineStore("garnish", () => {
         tabSize: 2,
         buildDataRowWidth: 10,
     });
+    const requestedExecution = ref(false);
+    const currentlyExecuting = ref(false);
 
     function buildSource(index: number) {
         garnishBuild(sources[index]).then((info: BuildInfo) => {
@@ -69,7 +67,18 @@ export const useGarnishStore = defineStore("garnish", () => {
     }
 
     function initializeExecution() {
-        garnishInitializeExecution().then((info: BuildInfo) => {
+        let sourceInfos = [];
+        for (let i = 0; i < sources.value.length; i++) {
+            sourceInfos.push({
+                name: `root_${i}`,
+                text: sources.value[i]
+            })
+        }
+
+        console.log(Object.entries(sources.value))
+        console.log(sourceInfos);
+
+        garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
             if (info) {
                 console.log(info);
                 executionBuild.value = info;
@@ -82,6 +91,37 @@ export const useGarnishStore = defineStore("garnish", () => {
             if (info) {
                 console.log(info);
                 executionBuild.value = info;
+            }
+        });
+    }
+
+    function startExecution(startExpression: string, input: string) {
+        requestedExecution.value = true;
+        garnishStartExecution(startExpression, input).then((info: ExecutionInfo) => {
+            requestedExecution.value = false;
+            if (info) {
+                currentlyExecuting.value = true;
+                console.log(info);
+                executionBuild.value = {
+                    all_lexer_tokens: executionBuild.value!.all_lexer_tokens,
+                    source_tokens: executionBuild.value!.source_tokens,
+                    runtime_data: info.runtime.data,
+                    context: info.context
+                };
+            }
+        });
+    }
+
+    function continueExecution() {
+        garnishContinueExecution().then((info: ExecutionInfo) => {
+            if (info) {
+                console.log(info);
+                executionBuild.value = {
+                    all_lexer_tokens: executionBuild.value!.all_lexer_tokens,
+                    source_tokens: executionBuild.value!.source_tokens,
+                    runtime_data: info.runtime.data,
+                    context: info.context
+                };
             }
         });
     }
@@ -110,12 +150,16 @@ export const useGarnishStore = defineStore("garnish", () => {
         sources,
         activeOutputTab,
         activeSource,
+        requestedExecution,
+        currentlyExecuting,
         updateSource,
         buildSource,
         setLexActive,
         setParseActive,
         setBuildActive,
         initializeExecution,
+        startExecution,
+        continueExecution,
         getExecutionBuild
     }
 })

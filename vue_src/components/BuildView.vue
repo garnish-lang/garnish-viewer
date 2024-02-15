@@ -7,6 +7,9 @@ import {it} from "vitest";
 
 const store = useGarnishStore();
 const selectedExpression = ref("");
+const expressionInput = ref("");
+
+const canStart = computed(() => selectedExpression.value !== "" && !store.requestedExecution);
 
 const instructions = computed(() => store.executionBuild ? store.executionBuild.runtime_data.instructions : []);
 const dataRows = computed(() => {
@@ -98,8 +101,16 @@ function getExpressionName(addr: number) {
   return build.name;
 }
 
-function initExecution() {
+function buildExecution() {
   store.initializeExecution();
+}
+
+function startExecution() {
+  store.startExecution(selectedExpression.value, expressionInput.value);
+}
+
+function continueExecution() {
+  store.continueExecution();
 }
 
 </script>
@@ -108,14 +119,16 @@ function initExecution() {
   <section class="root">
     <section class="execution_options">
       <nav>
-        <button @click="initExecution">Initialize</button>
+        <button @click="buildExecution">Build</button>
         <select v-model="selectedExpression">
           <option value="">Select Expression</option>
           <option v-for="name in availableExpressions" :value="name">{{ name }}</option>
         </select>
-        <textarea>
+        <textarea v-model="expressionInput">
 
         </textarea>
+        <button @click="startExecution" :disabled="!canStart" v-if="!store.currentlyExecuting">Start</button>
+        <button @click="continueExecution" :disabled="store.requestedExecution" v-if="store.currentlyExecuting">Continue</button>
       </nav>
       <section class="execution_details">
         <section>
@@ -199,10 +212,6 @@ function initExecution() {
             </thead>
             <tbody>
             <tr>
-              <th>Index</th>
-              <td v-for="n in jumpPath.length">{{ n - 1 }}</td>
-            </tr>
-            <tr>
               <th>Address</th>
               <td v-for="item in jumpPath">{{ item }}</td>
             </tr>
@@ -217,10 +226,6 @@ function initExecution() {
             </thead>
             <tbody>
             <tr>
-              <th>Index</th>
-              <td v-for="n in registers.length">{{ n - 1 }}</td>
-            </tr>
-            <tr>
               <th>Address</th>
               <td v-for="item in registers">{{ item }}</td>
             </tr>
@@ -234,10 +239,6 @@ function initExecution() {
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <th>Index</th>
-              <td v-for="n in values.length">{{ n - 1 }}</td>
-            </tr>
             <tr>
               <th>Address</th>
               <td v-for="item in values">{{ item }}</td>
@@ -260,8 +261,8 @@ function initExecution() {
           <td>Start Of</td>
         </tr>
         </thead>
-        <tbody class="highlight_row">
-        <tr v-for="(instruction, index) in instructions">
+        <tbody>
+        <tr v-for="(instruction, index) in instructions" :class="{ highlight: index === instructionCursor }">
           <td>{{ index }}</td>
           <td>{{ instruction.instruction }}</td>
           <td>{{ instruction.data ? instruction.data : "" }}</td>
@@ -357,6 +358,14 @@ table {
 
 .data tr {
   text-align: center;
+}
+
+.data td {
+  overflow: clip;
+}
+
+tr.highlight {
+  background-color: var(--highlight_color);
 }
 
 </style>

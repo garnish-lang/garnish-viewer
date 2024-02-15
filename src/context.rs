@@ -30,6 +30,10 @@ impl ViewerContext {
     pub fn metadata_mut(&mut self) -> &mut Vec<ExpressionBuildInfo> {
         &mut self.build_metadata
     }
+
+    pub fn get_expression_index(&self, name: &str) -> Option<usize> {
+        self.expression_map.get(name).cloned()
+    }
 }
 
 impl GarnishLangRuntimeContext<SimpleRuntimeData> for ViewerContext {

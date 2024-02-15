@@ -1,8 +1,18 @@
+export type SourceInfo = {
+    name: string,
+    text: string,
+}
+
 export type BuildInfo = {
     source_tokens: { [key: string]: LexerToken[]}
     all_lexer_tokens: LexerToken[],
     context: ViewerContext,
     runtime_data: RuntimeData,
+}
+
+export type ExecutionInfo = {
+    context: ViewerContext,
+    runtime: Runtime,
 }
 
 export type ViewerContext = {
@@ -17,6 +27,10 @@ export type ExpressionBuildInfo = {
     tokens: LexerToken[],
     parse_result: ParseResult,
     instruction_metadata: InstructionMetadata[],
+}
+
+export type Runtime = {
+    data: RuntimeData
 }
 
 export type RuntimeData = {
