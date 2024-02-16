@@ -1,5 +1,22 @@
 <script setup lang="ts">
 
+import {exists} from "@tauri-apps/api/fs";
+
+const props = withDefaults(
+    defineProps<{
+      title?: string,
+      data: any[],
+      rowHeaders?: boolean,
+      columnHeaders?: boolean,
+      columns?: { field?: string, label?: string }[],
+    }>(),
+    {
+      title: "",
+      data: () => [],
+      rowHeaders: false,
+      columnHeaders: true,
+      columns: () => []
+    });
 
 
 </script>
@@ -7,34 +24,18 @@
 <template>
   <table>
     <thead>
-    <tr>
-      <th :colspan="4">Data</th>
+    <tr v-if="props.title">
+      <th :colspan="props.columns.length">{{ props.title }}</th>
     </tr>
-    <tr>
-      <td>&mdash;</td>
-      <td>Column 1</td>
-      <td>Column 2</td>
-      <td>Column 3</td>
+    <tr v-if="props.columns.length > 0 && props.columnHeaders">
+      <td v-for="col in props.columns">{{ col.label || "" }}</td>
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <th>Row 1</th>
-      <td>Cell 1</td>
-      <td>Cell 2</td>
-      <td>Cell 3</td>
-    </tr>
-    <tr>
-      <th>Row 2</th>
-      <td>Cell 1</td>
-      <td>Cell 2</td>
-      <td>Cell 3</td>
-    </tr>
-    <tr>
-      <th>Row 3</th>
-      <td>Cell 1</td>
-      <td>Cell 2</td>
-      <td>Cell 3</td>
+    <tr v-for="item in props.data">
+      <td v-for="[index, value] in props.columns.entries()" :class="{row_header: props.rowHeaders && index === 0}">
+        {{ item[value.field] }}
+      </td>
     </tr>
     </tbody>
   </table>
@@ -60,7 +61,7 @@ th {
   background-color: var(--back_color);
 }
 
-tbody th {
+td.row_header {
   font-weight: normal;
   background-color: var(--edit_color);
 }
