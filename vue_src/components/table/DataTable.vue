@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-import {exists} from "@tauri-apps/api/fs";
-
 const props = withDefaults(
     defineProps<{
       title?: string,
@@ -11,14 +9,11 @@ const props = withDefaults(
       columns?: { field?: string, label?: string }[],
     }>(),
     {
-      title: "",
-      data: () => [],
+      title: null,
       rowHeaders: false,
       columnHeaders: true,
       columns: () => []
     });
-
-
 </script>
 
 <template>

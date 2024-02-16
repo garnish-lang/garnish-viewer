@@ -1,13 +1,14 @@
 import type {Meta, StoryObj} from '@storybook/vue3';
 
-import Table from "../components/table/Table.vue";
+import Table from "../components/table/DataTable.vue";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
     title: 'Components/Table',
     component: Table,
     argTypes: {},
-    args: {primary: false}, // default value
+    tags: ["autodocs"],
+    args: {}, // default value
 } satisfies Meta<typeof Table>;
 
 export default meta;
