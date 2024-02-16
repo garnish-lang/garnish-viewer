@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {invoke} from '@tauri-apps/api'
 import type {BuildInfo, ExecutionInfo, SourceInfo} from "./garnish_types";
 import {mockBuildData, mockExecutionData} from "./mock_data";
+import data from '../mock_db/execution_db.json'
 
 
 async function tauriInvokeOr<T>(cmd: string, mock_data: T, args: any = undefined): Promise<T | null> {
@@ -24,7 +25,7 @@ async function garnishBuild(input: string): Promise<BuildInfo | null> {
 }
 
 async function garnishInitializeExecution(sources: SourceInfo[]): Promise<BuildInfo | null> {
-    return await tauriInvokeOr("initialize_execution", mockBuildData(), {sources: sources});
+    return await tauriInvokeOr("initialize_execution", data[0], {sources: sources});
 }
 
 async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
@@ -81,6 +82,7 @@ export const useGarnishStore = defineStore("garnish", () => {
         garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
             if (info) {
                 console.log(info);
+                console.log(JSON.stringify(info)); // easy way to get data for web dev
                 executionBuild.value = info;
             }
         });

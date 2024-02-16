@@ -10,6 +10,10 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
         return data;
     }
 
+    if (exists(data["CharList"])) {
+        return `"${data["CharList"]}"`;
+    }
+
     if (exists(data["Number"])) {
         return data["Number"]["Integer"] ? data["Number"]["Integer"] : data["Number"]["Float"]
     }
