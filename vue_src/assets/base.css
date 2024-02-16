@@ -80,53 +80,6 @@ input[type="text"], textarea {
     line-height: 1.5;
 }
 
-table {
-    border-collapse: collapse;
-    margin: .5rem;
-    border: .25rem solid var(--edit_color);
-}
-
-thead {
-    text-align: center;
-}
-
-thead > tr > td {
-    background-color: var(--edit_color);
-    padding-bottom: .5rem;
-}
-
-th {
-    background-color: var(--back_color);
-}
-
-tbody th {
-    font-weight: normal;
-    background-color: var(--edit_color);
-}
-
-tr, td, th {
-    border: none;
-}
-
-td, th {
-    padding: .4rem .5rem;
-}
-
-tr:nth-child(even) {
-}
-
-tr:nth-child(odd) {
-    background-color: var(--accent_color);
-}
-
-tbody.highlight_row > tr:hover {
-    background-color: var(--highlight_color);
-}
-
-tbody.highlight_cell td:hover {
-    background-color: var(--highlight_color);
-}
-
 .content {
     display: flex;
     flex-direction: column;
