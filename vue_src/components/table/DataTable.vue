@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import {computed} from "vue";
+
 const props = withDefaults(
     defineProps<{
       title?: string,
@@ -7,6 +9,10 @@ const props = withDefaults(
       rowHeaders?: boolean,
       columnHeaders?: boolean,
       columns?: { field?: string, label?: string }[],
+      rowLimit?: number,
+      rowStart?: number,
+      columnLimit?: number,
+      columnStart?: number,
     }>(),
     {
       title: null,
@@ -14,6 +20,41 @@ const props = withDefaults(
       columnHeaders: true,
       columns: () => []
     });
+
+const visibleItems = computed(() => {
+  const start = props.rowStart || 0;
+  const end = Math.min(start + (props.rowLimit || props.data.length), props.data.length);
+  let items = [];
+
+  for (let i = start; i < end; i++) {
+    items.push({
+      index: i,
+      data: props.data[i]
+    })
+  }
+
+  return items;
+});
+
+const visibleColumns = computed(() => {
+  let start = props.columnStart || 0;
+  if (props.rowHeaders) {
+    start += 1;
+  }
+
+  const end = Math.min(start + (props.columnLimit || props.columns.length), props.columns.length);
+  let items = [];
+
+  if (props.rowHeaders) {
+    items.push(props.columns[0])
+  }
+
+  for (let i = start; i < end; i++) {
+    items.push(props.columns[i])
+  }
+
+  return items;
+});
 </script>
 
 <template>
@@ -23,13 +64,13 @@ const props = withDefaults(
       <th :colspan="props.columns.length">{{ props.title }}</th>
     </tr>
     <tr v-if="props.columns.length > 0 && props.columnHeaders">
-      <td v-for="col in props.columns">{{ col.label || "" }}</td>
+      <td v-for="col in visibleColumns">{{ col.label || "" }}</td>
     </tr>
     </thead>
     <tbody>
-    <tr v-for="item in props.data">
-      <td v-for="[index, value] in props.columns.entries()" :class="{row_header: props.rowHeaders && index === 0}">
-        {{ item[value.field] }}
+    <tr v-for="item in visibleItems">
+      <td v-for="[index, value] in visibleColumns.entries()" :class="{row_header: props.rowHeaders && index === 0}">
+        {{ item.data[value.field] }}
       </td>
     </tr>
     </tbody>
