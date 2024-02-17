@@ -164,6 +164,7 @@ tr.even {
 }
 
 tr.odd {
+  background-color: var(--back_color);
 }
 
 tbody.highlight_row > tr:hover {
