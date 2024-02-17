@@ -9,7 +9,8 @@ import data from '../mock_db/execution_db.json'
 async function tauriInvokeOr<T>(cmd: string, mock_data: T, args: any = undefined): Promise<T | null> {
     if (window.__TAURI_IPC__) {
         try {
-            return await invoke(cmd, args);
+            let result = await invoke(cmd, args);
+            console.log(result);
         } catch (e) {
             console.log(e);
             return null;
@@ -33,7 +34,6 @@ async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
 }
 
 async function garnishStartExecution(startExpression: string, input: string): Promise<ExecutionInfo | null> {
-    console.log(startExpression, input)
     return await tauriInvokeOr("start_execution", mockExecutionData(), {
         expressionName: startExpression,
         inputExpression: input
@@ -61,7 +61,6 @@ export const useGarnishStore = defineStore("garnish", () => {
     function buildSource(index: number) {
         garnishBuild(sources[index]).then((info: BuildInfo) => {
             if (info) {
-                console.log(info);
                 builds.value.push(info)
             }
         });
@@ -76,13 +75,9 @@ export const useGarnishStore = defineStore("garnish", () => {
             })
         }
 
-        console.log(Object.entries(sources.value))
-        console.log(sourceInfos);
-
         garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
             if (info) {
-                console.log(info);
-                console.log(JSON.stringify(info)); // easy way to get data for web dev
+                // console.log(JSON.stringify(info)); // easy way to get data for web dev
                 executionBuild.value = info;
             }
         });
@@ -91,7 +86,6 @@ export const useGarnishStore = defineStore("garnish", () => {
     function getExecutionBuild() {
         garnishGetExecutionBuild().then((info: BuildInfo) => {
             if (info) {
-                console.log(info);
                 executionBuild.value = info;
             }
         });
@@ -103,7 +97,6 @@ export const useGarnishStore = defineStore("garnish", () => {
             requestedExecution.value = false;
             if (info) {
                 currentlyExecuting.value = true;
-                console.log(info);
                 executionBuild.value = {
                     all_lexer_tokens: executionBuild.value!.all_lexer_tokens,
                     source_tokens: executionBuild.value!.source_tokens,
@@ -117,7 +110,6 @@ export const useGarnishStore = defineStore("garnish", () => {
     function continueExecution() {
         garnishContinueExecution().then((info: ExecutionInfo) => {
             if (info) {
-                console.log(info);
                 executionBuild.value = {
                     all_lexer_tokens: executionBuild.value!.all_lexer_tokens,
                     source_tokens: executionBuild.value!.source_tokens,

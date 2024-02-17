@@ -72,7 +72,6 @@ const dataRows = computed(() => {
     rows.push(row);
   }
 
-  console.log(rows);
   return rows;
 });
 
@@ -165,7 +164,7 @@ const jumpPath = computed(() => {
   }
 });
 
-const registers = computed(() =>{
+const registers = computed(() => {
   let columns = [{
     field: "row",
     label: '',
@@ -190,7 +189,7 @@ const registers = computed(() =>{
   }
 });
 
-const values = computed(() =>{
+const values = computed(() => {
   let columns = [{
     field: "row",
     label: '',
@@ -299,10 +298,6 @@ function continueExecution() {
       </nav>
       <section class="execution_details">
         <section>
-          <DataTable title="Instruction Cursor"
-                     :columns="[{field: 'value', label: ''}]"
-                     :column-headers="false"
-                     :data="[{'value': instructionCursor}]"/>
 
           <DataTable title="Current Character List"
                      :columns="[{field: 'value', label: ''}]"
@@ -331,23 +326,15 @@ function continueExecution() {
                      :column-headers="false"
                      :row-headers="true"
                      :data="jumpPath.data"/>
-
-          <DataTable title="Registers"
-                     :columns="registers.columns"
-                     :column-headers="false"
-                     :row-headers="true"
-                     :data="registers.data"/>
-
-          <DataTable title="Values"
-                     :columns="values.columns"
-                     :column-headers="false"
-                     :row-headers="true"
-                     :data="values.data"/>
         </section>
       </section>
     </section>
     <section class="lower_section">
       <section class="instruction_table">
+        <DataTable title="Instruction Cursor"
+                   :columns="[{field: 'value', label: ''}]"
+                   :column-headers="false"
+                   :data="[{'value': instructionCursor}]"/>
         <DataTable title="Instructions"
                    :data="instructions"
                    :columns="instructionColumns"
@@ -356,9 +343,25 @@ function continueExecution() {
                    :row-scroll="true"/>
       </section>
       <section class="data_table">
+
+        <DataTable title="Values"
+                   :columns="values.columns"
+                   :column-headers="false"
+                   :column-limit="10"
+                   :row-headers="true"
+                   :data="values.data"/>
+
+        <DataTable title="Registers"
+                   :columns="registers.columns"
+                   :column-headers="false"
+                   :column-limit="10"
+                   :row-headers="true"
+                   :data="registers.data"/>
+
         <DataTable title="Data"
                    :data="dataRows"
                    :row-headers="true"
+                   :row-limit="20"
                    :columns="columns"/>
       </section>
     </section>
@@ -366,6 +369,10 @@ function continueExecution() {
 </template>
 
 <style scoped>
+
+table {
+  margin-bottom: .5rem;
+}
 
 .root {
   display: flex;
@@ -404,10 +411,6 @@ function continueExecution() {
   flex-grow: 1;
   flex-basis: 0;
   margin-left: .5rem;
-}
-
-.execution_details > section > table {
-  margin-bottom: .5rem;
 }
 
 .execution_details > section:nth-child(2) {
