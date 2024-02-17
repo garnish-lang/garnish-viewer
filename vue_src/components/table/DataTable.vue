@@ -37,9 +37,9 @@ const trueRowLimit = computed(() => props.rowLimit || props.data.length || 0);
 const trueColumnLimit = computed(() => props.columnLimit || props.columns.length || 0);
 
 const visibleItems = computed(() => {
-  let start = props.rowStart || 0;
-
-  start = clamp(start + currentScrollRow.value, 0, props.data.length);
+  let start = (props.rowStart || 0)  + currentScrollRow.value;
+  const maxStart = Math.max(props.data.length - trueRowLimit.value, 0);
+  start = clamp(start, 0, maxStart);
 
   const end = Math.min(start + trueRowLimit.value, props.data.length);
   let items = [];
@@ -55,15 +55,13 @@ const visibleItems = computed(() => {
 });
 
 const visibleColumns = computed(() => {
-  let start = props.columnStart || 0;
+  let scrollableColumns = props.rowHeaders ? props.columns.slice(1) : props.columns;
 
-  start = clamp(start + currentScrollCol.value, 0, props.columns.length - trueColumnLimit.value);
+  let start = (props.columnStart || 0) + currentScrollCol.value;
+  let maxStart = Math.max(scrollableColumns.length - trueColumnLimit.value, 0);
+  start = clamp(start, 0, maxStart);
 
-  if (props.rowHeaders) {
-    start += 1;
-  }
-
-  const end = Math.min(start + trueColumnLimit.value, props.columns.length);
+  const end = Math.min(start + trueColumnLimit.value, scrollableColumns.length);
   let items = [];
 
   if (props.rowHeaders) {
@@ -71,7 +69,7 @@ const visibleColumns = computed(() => {
   }
 
   for (let i = start; i < end; i++) {
-    items.push(props.columns[i])
+    items.push(scrollableColumns[i])
   }
 
   return items;
