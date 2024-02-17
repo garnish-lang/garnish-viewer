@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
-import {computed} from "vue";
+import {computed, ref} from "vue";
+import {clamp} from "../../utils/math";
 
 const props = withDefaults(
     defineProps<{
@@ -13,17 +14,34 @@ const props = withDefaults(
       rowStart?: number,
       columnLimit?: number,
       columnStart?: number,
+      rowScroll?: boolean,
+      columnScroll?: boolean,
     }>(),
     {
+      rowLimit: null,
+      rowScroll: false,
+      columnLimit: null,
+      columnScroll: false,
+      rowStart: 0,
+      columnStart: 0,
       title: null,
       rowHeaders: false,
       columnHeaders: true,
       columns: () => []
     });
 
+const currentScrollRow = ref(0);
+const currentScrollCol = ref(0);
+
+const trueRowLimit = computed(() => props.rowLimit || props.data.length || 0);
+const trueColumnLimit = computed(() =>  props.columnLimit || props.columns.length || 0);
+
 const visibleItems = computed(() => {
-  const start = props.rowStart || 0;
-  const end = Math.min(start + (props.rowLimit || props.data.length), props.data.length);
+  let start = props.rowStart || 0;
+
+  start = clamp(start + currentScrollRow.value, 0, props.data.length);
+
+  const end = Math.min(start + trueRowLimit.value, props.data.length);
   let items = [];
 
   for (let i = start; i < end; i++) {
@@ -38,11 +56,14 @@ const visibleItems = computed(() => {
 
 const visibleColumns = computed(() => {
   let start = props.columnStart || 0;
+
+  start = clamp(start + currentScrollCol.value, 0, props.columns.length - trueColumnLimit.value);
+
   if (props.rowHeaders) {
     start += 1;
   }
 
-  const end = Math.min(start + (props.columnLimit || props.columns.length), props.columns.length);
+  const end = Math.min(start + trueColumnLimit.value, props.columns.length);
   let items = [];
 
   if (props.rowHeaders) {
@@ -55,6 +76,34 @@ const visibleColumns = computed(() => {
 
   return items;
 });
+
+function handleScroll(e: WheelEvent) {
+  e.preventDefault();
+  let up = e.deltaY < 0;
+
+  if (e.shiftKey && props.columnScroll) {
+    let scrollMin = -props.columnStart;
+    let scrollMax = props.columns.length - (props.columnStart + trueColumnLimit.value);
+    if (props.rowHeaders) {
+      scrollMax -= 1;
+    }
+
+    if (up) {
+      currentScrollCol.value = Math.max(currentScrollCol.value - 1, scrollMin);
+    } else {
+      currentScrollCol.value = Math.min(currentScrollCol.value + 1, scrollMax);
+    }
+  } else if (props.rowScroll) {
+    let scrollMin = -props.rowStart;
+    let scrollMax = props.data.length - (props.rowStart + trueRowLimit.value);
+
+    if (up) {
+      currentScrollRow.value = Math.max(currentScrollRow.value - 1, scrollMin);
+    } else {
+      currentScrollRow.value = Math.min(currentScrollRow.value + 1, scrollMax);
+    }
+  }
+}
 </script>
 
 <template>
@@ -68,7 +117,7 @@ const visibleColumns = computed(() => {
     </tr>
     </thead>
     <tbody>
-    <tr v-for="item in visibleItems">
+    <tr v-for="item in visibleItems" @wheel="handleScroll">
       <td v-for="[index, value] in visibleColumns.entries()" :class="{row_header: props.rowHeaders && index === 0}">
         {{ item.data[value.field] }}
       </td>

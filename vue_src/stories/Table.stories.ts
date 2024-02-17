@@ -107,7 +107,7 @@ export const FullDisplay: Story = {
     },
 };
 
-export const RowLimits: Story = {
+export const RowScroll: Story = {
     args: {
         title: "Some Data",
         data: data,
@@ -116,10 +116,11 @@ export const RowLimits: Story = {
         columns: columns,
         rowStart: 3,
         rowLimit: 5,
+        rowScroll: true,
     },
 };
 
-export const ColumnsLimits: Story = {
+export const ColumnsScroll: Story = {
     args: {
         title: "Some Data",
         data: data,
@@ -128,5 +129,6 @@ export const ColumnsLimits: Story = {
         columns: columns,
         columnLimit: 3,
         columnStart: 5,
+        columnScroll: true,
     },
 };
