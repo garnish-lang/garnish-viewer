@@ -49,7 +49,7 @@ export const useGarnishStore = defineStore("garnish", () => {
     const executionBuild = ref<BuildInfo | null>(null);
     const file_input = ref("");
     const sources = ref([""]);
-    const activeOutputTab = ref<"lex" | "parse" | "build">("build");
+    const activeOutputTab = ref<"lex" | "parse" | "build">("lex");
     const activeSource = ref(0);
     const config = ref({
         tabSize: 2,

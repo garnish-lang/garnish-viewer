@@ -3,10 +3,47 @@ import 'zingchart/es6';
 import 'zingchart/modules-es6/zingchart-tree.min.js';
 import ZingChartVue from "zingchart-vue";
 import {useGarnishStore} from "../stores/garnish";
-import {computed} from "vue";
+import {computed, ref} from "vue";
+import DataTable from "./table/DataTable.vue";
 
 const store = useGarnishStore();
-const builds = computed(() => store.builds[store.activeSource] ? store.builds[store.activeSource].context.build_metadata : []);
+const view = ref<"table" | "chart">("table");
+const builds = computed(() => store.executionBuild?.context.build_metadata || []);
+const nodeColumns = [
+  {
+    field: "index",
+    label: "Index",
+  },
+  {
+    field: "definition",
+    label: "Definition",
+  },
+  {
+    field: "parent",
+    label: "Parent",
+  },
+  {
+    field: "left",
+    label: "Left",
+  },
+  {
+    field: "right",
+    label: "Right",
+  }
+];
+
+function makeNodeTable(build) {
+  let nodes = [];
+
+  for (const [i, n] of build.parse_result.nodes.entries()) {
+    nodes.push({
+      index: i.toString(),
+      ...n
+    })
+  }
+
+  return nodes;
+}
 
 function makeChartNodes(build) {
   let nodes = [];
@@ -81,11 +118,19 @@ function makeChartConfig() {
 
 <template>
   <section class="root">
-    <section v-for="build in builds" class="graph_container">
-      <h4>{{ build.name }}</h4>
-      <div>
-        <ZingChartVue :data="makeChartConfig()" :series="makeChartNodes(build)"/>
-      </div>
+    <section v-if="view === 'table'" class="parseTables">
+      <DataTable v-for="build in builds"
+                 :title="build.name"
+                 :columns="nodeColumns"
+                 :data="makeNodeTable(build)"/>
+    </section>
+    <section v-if="view === 'chart'">
+      <section v-for="build in builds" class="graph_container">
+        <h4>{{ build.name }}</h4>
+        <div>
+          <ZingChartVue :data="makeChartConfig()" :series="makeChartNodes(build)"/>
+        </div>
+      </section>
     </section>
   </section>
 </template>
@@ -110,5 +155,13 @@ section.root {
 .graph_container > div {
   flex-grow: 1;
   flex-basis: 0;
+}
+
+.parseTables {
+  margin: .5rem;
+}
+
+.parseTables > table {
+  margin-bottom: .5rem;
 }
 </style>

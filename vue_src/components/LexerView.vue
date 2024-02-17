@@ -7,6 +7,8 @@ import type {LexerToken} from "../stores/garnish_types";
 const store = useGarnishStore();
 const activeTokens = computed(() => store.builds[store.activeSource] ? store.builds[store.activeSource].all_lexer_tokens : []);
 
+const sourceTokens = computed(() => Object.entries(store.executionBuild?.source_tokens || {}))
+
 function makeText(token: LexerToken):string {
   if (token.token_type === "Whitespace" || token.token_type === "Subexpression") {
     let s = [];
@@ -26,13 +28,24 @@ function makeText(token: LexerToken):string {
 </script>
 
 <template>
-  <section id="lexerTokenList">
-    <span v-for="token in activeTokens" :title="token.token_type">{{ makeText(token) }}</span>
+  <section v-for="[key, source] in sourceTokens" class="root">
+    <h4>Source: {{key}}</h4>
+    <section class="tokenList">
+      <span v-for="token in source" :title="token.token_type">{{ makeText(token) }}</span>
+    </section>
   </section>
 </template>
 
 <style scoped>
-section {
+.root {
+
+}
+
+.root > h4 {
+  margin: 1rem 0 1rem .5rem;
+}
+
+section.tokenList {
   margin: .25rem;
   display: flex;
   flex-grow: 1;
@@ -46,6 +59,8 @@ section {
 span {
   display: inline-block;
   text-align: center;
+  text-wrap: none;
+  white-space: nowrap;
   padding: .5rem 1rem;
   margin: 0 .25rem .5rem .25rem;
   flex-basis: 0;
