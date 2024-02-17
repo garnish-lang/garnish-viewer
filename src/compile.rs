@@ -20,25 +20,26 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
     let expression = &tokens[(index + 1)..];
 
     if expression.is_empty() {
-        return Err("No tokens in expression".to_string())
+        return Err("No tokens in expression".to_string());
     }
 
-    let mut first = 0;
-    let mut last = expression.len();
+    let mut first = expression
+        .iter()
+        .enumerate()
+        .find(|(_i, v)| {
+            ![TokenType::Whitespace, TokenType::StartExpression].contains(&v.get_token_type())
+        })
+        .map(|(i, _v)| i)
+        .unwrap_or(0);
 
-    for (i, v) in expression.iter().enumerate() {
-        if ![TokenType::Whitespace, TokenType::StartExpression].contains(&v.get_token_type()) {
-            first = i;
-            break;
-        }
-    }
-
-    for (i, v) in expression.iter().enumerate().rev() {
-        if ![TokenType::Whitespace, TokenType::EndExpression].contains(&v.get_token_type()) {
-            last = i + 1;
-            break;
-        }
-    }
+    let mut last = expression
+        .iter()
+        .enumerate()
+        .rfind(|(_i, v)| {
+            ![TokenType::Whitespace, TokenType::EndExpression].contains(&v.get_token_type())
+        })
+        .map(|(i, _v)| i + 1)
+        .unwrap_or(expression.len());
 
     Ok(AnnotationParts {
         name_token,
@@ -55,16 +56,25 @@ mod annotations {
     fn empty_gives_error() {
         let tokens = vec![];
 
-        assert_eq!(extract_annotation_parts(&tokens), Err("No name found for annotation".to_string()));
+        assert_eq!(
+            extract_annotation_parts(&tokens),
+            Err("No name found for annotation".to_string())
+        );
     }
 
     #[test]
     fn no_expression_gives_error() {
-        let tokens = vec![
-            LexerToken::new("expr".to_string(), TokenType::Identifier, 0, 0),
-        ];
+        let tokens = vec![LexerToken::new(
+            "expr".to_string(),
+            TokenType::Identifier,
+            0,
+            0,
+        )];
 
-        assert_eq!(extract_annotation_parts(&tokens), Err("No tokens in expression".to_string()));
+        assert_eq!(
+            extract_annotation_parts(&tokens),
+            Err("No tokens in expression".to_string())
+        );
     }
 
     #[test]
@@ -76,7 +86,10 @@ mod annotations {
             LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
         ];
 
-        assert_eq!(extract_annotation_parts(&tokens), Err("Invalid name for annotation".to_string()));
+        assert_eq!(
+            extract_annotation_parts(&tokens),
+            Err("Invalid name for annotation".to_string())
+        );
     }
 
     #[test]
