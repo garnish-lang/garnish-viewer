@@ -23,9 +23,26 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
         return Err("No tokens in expression".to_string())
     }
 
+    let mut first = 0;
+    let mut last = expression.len();
+
+    for (i, v) in expression.iter().enumerate() {
+        if ![TokenType::Whitespace, TokenType::StartExpression].contains(&v.get_token_type()) {
+            first = i;
+            break;
+        }
+    }
+
+    for (i, v) in expression.iter().enumerate().rev() {
+        if ![TokenType::Whitespace, TokenType::EndExpression].contains(&v.get_token_type()) {
+            last = i + 1;
+            break;
+        }
+    }
+
     Ok(AnnotationParts {
         name_token,
-        expression,
+        expression: &expression[first..last],
     })
 }
 
@@ -94,10 +111,12 @@ mod annotations {
     }
 
     #[test]
-    fn extract_parts_successful_with_spaces() {
+    fn extract_parts_strips_whitespace_and_braces() {
         let tokens = vec![
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("expr".to_string(), TokenType::Identifier, 0, 0),
+            LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
+            LexerToken::new("{".to_string(), TokenType::StartExpression, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
@@ -105,47 +124,39 @@ mod annotations {
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
+            LexerToken::new("}".to_string(), TokenType::EndExpression, 0, 0),
         ];
 
         let parts = extract_annotation_parts(&tokens).unwrap();
 
         assert_eq!(parts.name_token.get_text(), "expr");
         assert_eq!(parts.name_token.get_token_type(), TokenType::Identifier);
-        assert_eq!(parts.expression.len(), 7);
-        assert_eq!(parts.expression.get(0).unwrap().get_text(), " ");
+        assert_eq!(parts.expression.len(), 5);
+
+        assert_eq!(parts.expression.get(0).unwrap().get_text(), "5");
         assert_eq!(
             parts.expression.get(0).unwrap().get_token_type(),
-            TokenType::Whitespace
+            TokenType::Number
         );
-        assert_eq!(parts.expression.get(1).unwrap().get_text(), "5");
+        assert_eq!(parts.expression.get(1).unwrap().get_text(), " ");
         assert_eq!(
             parts.expression.get(1).unwrap().get_token_type(),
-            TokenType::Number
+            TokenType::Whitespace
         );
-        assert_eq!(parts.expression.get(2).unwrap().get_text(), " ");
+        assert_eq!(parts.expression.get(2).unwrap().get_text(), "+");
         assert_eq!(
             parts.expression.get(2).unwrap().get_token_type(),
-            TokenType::Whitespace
-        );
-        assert_eq!(parts.expression.get(3).unwrap().get_text(), "+");
-        assert_eq!(
-            parts.expression.get(3).unwrap().get_token_type(),
             TokenType::PlusSign
         );
-        assert_eq!(parts.expression.get(4).unwrap().get_text(), " ");
+        assert_eq!(parts.expression.get(3).unwrap().get_text(), " ");
+        assert_eq!(
+            parts.expression.get(3).unwrap().get_token_type(),
+            TokenType::Whitespace
+        );
+        assert_eq!(parts.expression.get(4).unwrap().get_text(), "5");
         assert_eq!(
             parts.expression.get(4).unwrap().get_token_type(),
-            TokenType::Whitespace
-        );
-        assert_eq!(parts.expression.get(5).unwrap().get_text(), "5");
-        assert_eq!(
-            parts.expression.get(5).unwrap().get_token_type(),
             TokenType::Number
-        );
-        assert_eq!(parts.expression.get(6).unwrap().get_text(), " ");
-        assert_eq!(
-            parts.expression.get(6).unwrap().get_token_type(),
-            TokenType::Whitespace
         );
     }
 }
