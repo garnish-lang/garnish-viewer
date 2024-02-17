@@ -128,7 +128,6 @@ function handleScroll(e: WheelEvent) {
 <style scoped>
 table {
   border-collapse: collapse;
-  margin: .5rem;
   border: .25rem solid var(--edit_color);
 }
 
@@ -156,6 +155,8 @@ tr, td, th {
 
 td, th {
   padding: .4rem .5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 tr.even {

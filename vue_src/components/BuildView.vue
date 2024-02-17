@@ -4,6 +4,7 @@ import {useGarnishStore} from "../stores/garnish";
 import {computed, ref} from "vue";
 import {formatData} from "../utils/garnish_display";
 import {it} from "vitest";
+import DataTable from "./table/DataTable.vue";
 
 const store = useGarnishStore();
 const selectedExpression = ref("");
@@ -11,34 +12,83 @@ const expressionInput = ref("");
 
 const canStart = computed(() => selectedExpression.value !== "" && !store.requestedExecution);
 
-const instructions = computed(() => store.executionBuild ? store.executionBuild.runtime_data.instructions : []);
+const instructions = computed(() => {
+  if (!store.executionBuild) {
+    return [];
+  }
+
+  let instructions = [];
+  for (let i = 0; i < store.executionBuild.runtime_data.instructions.length; i++) {
+    const item = store.executionBuild.runtime_data.instructions[i];
+    instructions.push({
+      addr: i,
+      instruction: item.instruction,
+      data: item.data,
+      startOf: getExpressionName(i)
+    });
+  }
+
+  return instructions
+});
+
+const instructionColumns = [
+  {
+    field: "addr",
+    label: "Address"
+  },
+  {
+    field: "instruction",
+    label: "Instruction"
+  },
+  {
+    field: "data",
+    label: "Data",
+  },
+  {
+    field: "startOf",
+    label: "Start Of"
+  }
+];
+
 const dataRows = computed(() => {
   const data = store.executionBuild ? store.executionBuild.runtime_data.data.list : [];
   const totalRows = Math.ceil(data.length / store.config.buildDataRowWidth);
 
   const rows = [];
   for (let i = 0; i < totalRows; i++) {
-    const row = [];
+    const row = {
+      row: `${i * 10}`
+    };
 
     for (let j = 0; j < store.config.buildDataRowWidth; j++) {
       const addr = i * store.config.buildDataRowWidth + j;
       if (data[addr]) {
-        row.push({
-          addr,
-          data: formatData(store.executionBuild!, addr)
-        });
+        row[j] = formatData(store.executionBuild!, addr);
       } else {
-        row.push({
-          addr,
-          data: ""
-        });
+        row[j] = "";
       }
     }
 
     rows.push(row);
   }
 
+  console.log(rows);
   return rows;
+});
+
+const columns = computed(() => {
+  let columns = [{
+    field: "row",
+    label: "—"
+  }];
+  for (let i = 0; i < 10; i++) {
+    columns.push({
+      field: `${i}`,
+      label: `${i}`
+    })
+  }
+
+  return columns
 });
 
 const availableExpressions = computed(() =>
@@ -128,7 +178,9 @@ function continueExecution() {
 
         </textarea>
         <button @click="startExecution" :disabled="!canStart" v-if="!store.currentlyExecuting">Start</button>
-        <button @click="continueExecution" :disabled="store.requestedExecution" v-if="store.currentlyExecuting">Continue</button>
+        <button @click="continueExecution" :disabled="store.requestedExecution" v-if="store.currentlyExecuting">
+          Continue
+        </button>
       </nav>
       <section class="execution_details">
         <section>
@@ -248,45 +300,21 @@ function continueExecution() {
         </section>
       </section>
     </section>
-    <section>
-      <table>
-        <thead>
-        <tr>
-          <th colspan="4">Instructions</th>
-        </tr>
-        <tr>
-          <td>Address</td>
-          <td>Instruction</td>
-          <td>Data</td>
-          <td>Start Of</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(instruction, index) in instructions" :class="{ highlight: index === instructionCursor }">
-          <td>{{ index }}</td>
-          <td>{{ instruction.instruction }}</td>
-          <td>{{ instruction.data ? instruction.data : "" }}</td>
-          <td>{{ getExpressionName(index) }}</td>
-        </tr>
-        </tbody>
-      </table>
-      <table class="data">
-        <thead>
-        <tr>
-          <th :colspan="store.config.buildDataRowWidth">Data</th>
-        </tr>
-        <tr>
-          <td>&mdash;</td>
-          <td v-for="n in store.config.buildDataRowWidth">{{ n - 1 }}</td>
-        </tr>
-        </thead>
-        <tbody class="highlight_cell">
-        <tr v-for="(row, index) in dataRows">
-          <th>{{ index * store.config.buildDataRowWidth }}</th>
-          <td v-for="item in row">{{ item.data }}</td>
-        </tr>
-        </tbody>
-      </table>
+    <section class="lower_section">
+      <section class="instruction_table">
+        <DataTable title="Instructions"
+                   :data="instructions"
+                   :columns="instructionColumns"
+                   :row-headers="true"
+                   :row-limit="20"
+                   :row-scroll="true"/>
+      </section>
+      <section class="data_table">
+        <DataTable title="Data"
+                   :data="dataRows"
+                   :row-headers="true"
+                   :columns="columns"/>
+      </section>
     </section>
   </section>
 </template>
@@ -346,26 +374,30 @@ function continueExecution() {
   margin-left: 0;
 }
 
-table {
-  flex-grow: 0;
+.lower_section {
+  display: flex;
 }
 
-.data {
+.lower_section > section {
+  flex-basis: 0;
+  margin: .5rem;
+}
+
+.lower_section > section:first-child {
+  margin-right: 0;
+}
+
+.lower_section table {
   table-layout: fixed;
   width: 100%;
-  margin-left: 0;
 }
 
-.data tr {
-  text-align: center;
+.lower_section > .instruction_table {
+  flex-grow: 1;
 }
 
-.data td {
-  overflow: clip;
-}
-
-tr.highlight {
-  background-color: var(--highlight_color);
+.lower_section > .data_table {
+  flex-grow: 2;
 }
 
 </style>
