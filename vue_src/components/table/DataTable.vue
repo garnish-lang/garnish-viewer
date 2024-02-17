@@ -34,7 +34,7 @@ const currentScrollRow = ref(0);
 const currentScrollCol = ref(0);
 
 const trueRowLimit = computed(() => props.rowLimit || props.data.length || 0);
-const trueColumnLimit = computed(() =>  props.columnLimit || props.columns.length || 0);
+const trueColumnLimit = computed(() => props.columnLimit || props.columns.length || 0);
 
 const visibleItems = computed(() => {
   let start = props.rowStart || 0;
@@ -117,8 +117,9 @@ function handleScroll(e: WheelEvent) {
     </tr>
     </thead>
     <tbody>
-    <tr v-for="item in visibleItems" @wheel="handleScroll">
-      <td v-for="[index, value] in visibleColumns.entries()" :class="{row_header: props.rowHeaders && index === 0}">
+    <tr v-for="item in visibleItems" @wheel="handleScroll" :class="{odd: item.index % 2 === 1, even: item.index % 2 === 0}">
+      <td v-for="[index, value] in visibleColumns.entries()"
+          :class="{row_header: props.rowHeaders && index === 0}">
         {{ item.data[value.field] }}
       </td>
     </tr>
@@ -159,10 +160,10 @@ td, th {
   padding: .4rem .5rem;
 }
 
-tr:nth-child(even) {
+tr.even {
 }
 
-tr:nth-child(odd) {
+tr.odd {
   background-color: var(--accent_color);
 }
 
