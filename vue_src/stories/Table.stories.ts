@@ -22,21 +22,22 @@ type Story = StoryObj<typeof meta>;
 
 function makeRow(i) {
     return {
-        name: `Row ${i}`,
-        one: "Cell 1",
-        two: "Cell 2",
-        three: "Cell 3",
-        four: "Cell 4",
-        five: "Cell 5",
-        six: "Cell 6",
-        seven: "Cell 7",
-        eight: "Cell 8",
-        nine: "Cell 9",
-        ten: "Cell 10",
+        name: `Row ${i + 1}`,
+        one: `Cell ${i * 10 + 1}`,
+        two: `Cell ${i * 10 + 2}`,
+        three: `Cell ${i * 10 + 3}`,
+        four: `Cell ${i * 10 + 4}`,
+        five: `Cell ${i * 10 + 5}`,
+        six: `Cell ${i * 10 + 6}`,
+        seven: `Cell ${i * 10 + 7}`,
+        eight: `Cell ${i * 10 + 8}`,
+        nine: `Cell ${i * 10 + 9}`,
+        ten: `Cell ${i * 10 + 10}`,
     }
 }
 
 const data = [
+    makeRow(0),
     makeRow(1),
     makeRow(2),
     makeRow(3),
@@ -46,7 +47,6 @@ const data = [
     makeRow(7),
     makeRow(8),
     makeRow(9),
-    makeRow(10),
 ];
 
 const columns = [
