@@ -160,10 +160,10 @@ td, th {
 }
 
 tr.even {
+  background-color: var(--accent_color);
 }
 
 tr.odd {
-  background-color: var(--accent_color);
 }
 
 tbody.highlight_row > tr:hover {

@@ -113,21 +113,136 @@ const currentList = computed(() =>
     store.executionBuild ? store.executionBuild.runtime_data.current_list || [[], []] : [[], []]
 );
 
-const jumpTable = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.expression_table : []
-);
+const jumpTable = computed(() => {
+  let columns = [{
+    field: "row",
+    label: '',
+  }];
 
-const jumpPath = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.jump_path : []
-);
+  let indexRow = {row: "Index"};
+  let addressRow = {row: "Address"};
 
-const registers = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.register : []
-);
+  if (store.executionBuild) {
+    for (let i = 0; i < store.executionBuild.runtime_data.expression_table.length; i++) {
+      columns.push({
+        field: `${i}`,
+        label: `${i}`
+      });
 
-const values = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.values : []
-);
+      indexRow[`${i}`] = i;
+      addressRow[`${i}`] = store.executionBuild.runtime_data.expression_table[i];
+    }
+  }
+
+  return {
+    columns,
+    data: [indexRow, addressRow]
+  }
+});
+
+const jumpPath = computed(() => {
+  let columns = [{
+    field: "row",
+    label: '',
+  }];
+
+  let addressRow = {row: "Address"};
+
+  if (store.executionBuild) {
+    for (let i = 0; i < store.executionBuild.runtime_data.jump_path.length; i++) {
+      columns.push({
+        field: `${i}`,
+        label: `${i}`
+      });
+
+      addressRow[`${i}`] = store.executionBuild.runtime_data.jump_path[i];
+    }
+  }
+
+  return {
+    columns,
+    data: [addressRow]
+  }
+});
+
+const registers = computed(() =>{
+  let columns = [{
+    field: "row",
+    label: '',
+  }];
+
+  let addressRow = {row: "Address"};
+
+  if (store.executionBuild) {
+    for (let i = 0; i < store.executionBuild.runtime_data.register.length; i++) {
+      columns.push({
+        field: `${i}`,
+        label: `${i}`
+      });
+
+      addressRow[`${i}`] = store.executionBuild.runtime_data.register[i];
+    }
+  }
+
+  return {
+    columns,
+    data: [addressRow]
+  }
+});
+
+const values = computed(() =>{
+  let columns = [{
+    field: "row",
+    label: '',
+  }];
+
+  let addressRow = {row: "Address"};
+
+  if (store.executionBuild) {
+    for (let i = 0; i < store.executionBuild.runtime_data.values.length; i++) {
+      columns.push({
+        field: `${i}`,
+        label: `${i}`
+      });
+
+      addressRow[`${i}`] = store.executionBuild.runtime_data.values[i];
+    }
+  }
+
+  return {
+    columns,
+    data: [addressRow]
+  }
+});
+
+const currentListInfo = computed(() => {
+  let columnCount = Math.max(currentList.value[0].length, currentList.value[1].length);
+  let columns = [{
+    field: 'row',
+    label: '',
+  }];
+  for (let i = 0; i < columnCount; i++) {
+    columns.push({
+      field: `${i}`,
+      label: `${i}`
+    });
+  }
+
+  let itemRow = {row: "Items"};
+  for (let i = 0; i < currentList.value[0]; i++) {
+    itemRow[`${i}`] = currentList.value[0][i];
+  }
+
+  let associationRow = {row: "Associations"};
+  for (let i = 0; i < currentList.value[0]; i++) {
+    associationRow[`${i}`] = currentList.value[1][i];
+  }
+
+  return {
+    columns,
+    data: [itemRow, associationRow]
+  }
+});
 
 function getExpressionName(addr: number) {
   if (!store.executionBuild) {
@@ -184,119 +299,50 @@ function continueExecution() {
       </nav>
       <section class="execution_details">
         <section>
-          <table class="instruction">
-            <thead>
-            <tr>
-              <th>Instruction Cursor</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>{{ instructionCursor }}</td>
-            </tr>
-            </tbody>
-          </table>
-          <table class="character_list">
-            <thead>
-            <tr>
-              <th colspan="1">Current Character List</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>{{ currentCharacterList }}</td>
-            </tr>
-            </tbody>
-          </table>
-          <table class="byte_list">
-            <thead>
-            <tr>
-              <th colspan="1">Current Byte List</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>{{ currentByteList }}</td>
-            </tr>
-            </tbody>
-          </table>
-          <table class="current_list">
-            <thead>
-            <tr>
-              <th colspan="4">Current List</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th>Items</th>
-              <td v-for="item in currentList[0]">{{ item }}</td>
-            </tr>
-            <tr>
-              <th>Associations</th>
-              <td v-for="item in currentList[1]">{{ item }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <DataTable title="Instruction Cursor"
+                     :columns="[{field: 'value', label: ''}]"
+                     :column-headers="false"
+                     :data="[{'value': instructionCursor}]"/>
 
-          <table class="jump_table">
-            <thead>
-            <tr>
-              <th colspan="4">Jump Table</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th>Index</th>
-              <td v-for="n in jumpTable.length">{{ n - 1 }}</td>
-            </tr>
-            <tr>
-              <th>Address</th>
-              <td v-for="item in jumpTable">{{ item }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <DataTable title="Current Character List"
+                     :columns="[{field: 'value', label: ''}]"
+                     :column-headers="false"
+                     :data="[{'value': currentCharacterList || '&nbsp;'}]"/>
 
-          <table class="jump_path">
-            <thead>
-            <tr>
-              <th colspan="4">Jump path</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th>Address</th>
-              <td v-for="item in jumpPath">{{ item }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <DataTable title="Current Byte List"
+                     :columns="[{field: 'value', label: ''}]"
+                     :column-headers="false"
+                     :data="[{'value': currentByteList || '&nbsp;'}]"/>
 
-          <table class="register_table">
-            <thead>
-            <tr>
-              <th colspan="4">Registers</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th>Address</th>
-              <td v-for="item in registers">{{ item }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <DataTable title="Current List"
+                     :columns="currentListInfo.columns"
+                     :column-headers="false"
+                     :row-headers="true"
+                     :data="currentListInfo.data"/>
 
-          <table class="value_table">
-            <thead>
-            <tr>
-              <th colspan="4">Values</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <th>Address</th>
-              <td v-for="item in values">{{ item }}</td>
-            </tr>
-            </tbody>
-          </table>
+          <DataTable title="Jump Table"
+                     :columns="jumpTable.columns"
+                     :column-headers="false"
+                     :row-headers="true"
+                     :data="jumpTable.data"/>
+
+          <DataTable title="Jump Path"
+                     :columns="jumpPath.columns"
+                     :column-headers="false"
+                     :row-headers="true"
+                     :data="jumpPath.data"/>
+
+          <DataTable title="Registers"
+                     :columns="registers.columns"
+                     :column-headers="false"
+                     :row-headers="true"
+                     :data="registers.data"/>
+
+          <DataTable title="Values"
+                     :columns="values.columns"
+                     :column-headers="false"
+                     :row-headers="true"
+                     :data="values.data"/>
         </section>
       </section>
     </section>
@@ -357,6 +403,11 @@ function continueExecution() {
 .execution_details > section {
   flex-grow: 1;
   flex-basis: 0;
+  margin-left: .5rem;
+}
+
+.execution_details > section > table {
+  margin-bottom: .5rem;
 }
 
 .execution_details > section:nth-child(2) {
