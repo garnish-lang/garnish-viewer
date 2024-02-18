@@ -8,6 +8,21 @@ const store = useGarnishStore();
 const activeTokens = computed(() => store.builds[store.activeSource] ? store.builds[store.activeSource].all_lexer_tokens : []);
 
 const sourceTokens = computed(() => Object.entries(store.executionBuild?.source_tokens || {}))
+const subSourceTokens = computed(() => {
+  const o = {};
+
+  for (let [k, v] of sourceTokens.value) {
+    o[k] = [];
+  }
+
+  for (let build of store.executionBuild?.context.build_metadata) {
+    console.log(build.source);
+    o[build.source].push(build);
+  }
+
+  console.log(o);
+  return o;
+})
 
 function makeText(token: LexerToken):string {
   if (token.token_type === "Whitespace" || token.token_type === "Subexpression") {
@@ -33,6 +48,12 @@ function makeText(token: LexerToken):string {
     <section class="tokenList">
       <span v-for="token in source" :title="token.token_type">{{ makeText(token) }}</span>
     </section>
+    <section v-for="build in subSourceTokens[key]" class="subTokenList">
+      <h6>{{ build.name }}</h6>
+      <section class="tokenList">
+        <span v-for="token in build.tokens" :title="token.token_type">{{ makeText(token) }}</span>
+      </section>
+    </section>
   </section>
 </template>
 
@@ -41,7 +62,7 @@ function makeText(token: LexerToken):string {
 
 }
 
-.root > h4 {
+h4, h6 {
   margin: 1rem 0 1rem .5rem;
 }
 

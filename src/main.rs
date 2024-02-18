@@ -29,6 +29,7 @@ struct BuildInfo {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ExpressionBuildInfo {
+    source: String,
     name: String,
     start: usize,
     text: String,
@@ -124,6 +125,7 @@ fn build_input_with_context(
     )?;
 
     let root_metadata = ExpressionBuildInfo {
+        source: name.to_string(),
         name: name.to_string(),
         start: index,
         text: source,
@@ -177,6 +179,7 @@ fn handle_def_annotations(
             };
 
         builds.push(ExpressionBuildInfo {
+            source: name.clone(),
             name: annotation_parts.name_token.get_text().clone(),
             start: expression_index,
             text: source,

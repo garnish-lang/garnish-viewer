@@ -9,8 +9,9 @@ import data from '../mock_db/execution_db.json'
 async function tauriInvokeOr<T>(cmd: string, mock_data: T, args: any = undefined): Promise<T | null> {
     if (window.__TAURI_IPC__) {
         try {
-            let result = await invoke(cmd, args);
+            let result: T = await invoke(cmd, args);
             console.log(result);
+            return result;
         } catch (e) {
             console.log(e);
             return null;
@@ -77,7 +78,7 @@ export const useGarnishStore = defineStore("garnish", () => {
 
         garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
             if (info) {
-                // console.log(JSON.stringify(info)); // easy way to get data for web dev
+                console.log(JSON.stringify(info)); // easy way to get data for web dev
                 executionBuild.value = info;
             }
         });

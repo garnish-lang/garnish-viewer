@@ -21,6 +21,7 @@ export type ViewerContext = {
 }
 
 export type ExpressionBuildInfo = {
+    source: string,
     name: string,
     start: number,
     text: string,
