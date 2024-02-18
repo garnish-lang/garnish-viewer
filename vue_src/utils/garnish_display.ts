@@ -49,6 +49,6 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
     return JSON.stringify(data);
 }
 
-function exists(v: any): boolean {
+export function exists(v: any): boolean {
     return typeof v !== "undefined" && v !== null;
 }

@@ -3,13 +3,29 @@
 import {useGarnishStore} from "../stores/garnish";
 import {computed, ref} from "vue";
 import {formatData} from "../utils/garnish_display";
-import {it} from "vitest";
 import DataTable from "./table/DataTable.vue";
 import {clamp} from "../utils/math";
+import {TableHighlightType} from "../stories/types";
 
 const store = useGarnishStore();
 const selectedExpression = ref("");
 const expressionInput = ref("");
+const selectedDataAddress = ref<number | null>(null);
+const selectedInstructionAddress = ref<number | null>(null);
+
+const selectedInstruction = computed(() => {
+  if (!selectedInstructionAddress.value || !store.executionBuild) {
+    return null;
+  }
+
+  console.log(selectedInstructionAddress.value);
+
+  return store.executionBuild.runtime_data.instructions[selectedInstructionAddress.value];
+});
+
+const selectedData = computed(() =>
+    selectedDataAddress.value && store.executionBuild ? formatData(store.executionBuild, selectedDataAddress.value!) : null
+);
 
 const canStart = computed(() => selectedExpression.value !== "" && !store.requestedExecution);
 
@@ -285,6 +301,15 @@ function continueExecution() {
   store.continueExecution();
 }
 
+function dataSelection(row, field) {
+  selectedDataAddress.value = row.index * 10 + parseInt(field);
+}
+
+function instructionSelection(row) {
+  console.log(row);
+  selectedInstructionAddress.value = row.index;
+}
+
 </script>
 
 <template>
@@ -339,6 +364,13 @@ function continueExecution() {
     </section>
     <section class="lower_section">
       <section class="instruction_table">
+        <p class="data_preview">
+          <span v-if="!selectedInstruction">&nbsp;</span>
+          <span v-if="selectedInstruction">
+            {{ selectedInstruction!.instruction }} {{ selectedInstruction!.data ? ` - ${selectedInstruction.data}` : "" }}
+          </span>
+        </p>
+
         <DataTable title="Instruction Cursor"
                    :columns="[{field: 'value', label: ''}]"
                    :column-headers="false"
@@ -346,14 +378,19 @@ function continueExecution() {
 
         <DataTable title="Instructions"
                    :data="instructions"
+                   :highlight-type="TableHighlightType.Row"
                    :selected="instructionCursor"
                    :columns="instructionColumns"
                    :row-headers="true"
                    :row-start="instructionStart"
                    :row-limit="instructionLimit"
-                   :row-scroll="true"/>
+                   :row-scroll="true"
+                   @selection="instructionSelection"/>
       </section>
       <section class="data_table">
+        <p class="data_preview">
+          {{ selectedData || "&nbsp;" }}
+        </p>
 
         <DataTable title="Values"
                    :columns="values.columns"
@@ -371,9 +408,11 @@ function continueExecution() {
 
         <DataTable title="Data"
                    :data="dataRows"
+                   :highlight-type="TableHighlightType.Cell"
                    :row-headers="true"
                    :row-limit="20"
-                   :columns="columns"/>
+                   :columns="columns"
+                   @selection="dataSelection"/>
       </section>
     </section>
   </section>
@@ -463,6 +502,12 @@ table {
 
 .lower_section > .data_table {
   flex-grow: 2;
+}
+
+.data_preview {
+  background-color: var(--edit_color);
+  margin-bottom: .5rem;
+  padding: .5rem;
 }
 
 </style>

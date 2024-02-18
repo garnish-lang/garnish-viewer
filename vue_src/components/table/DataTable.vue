@@ -2,6 +2,10 @@
 
 import {computed, ref} from "vue";
 import {clamp} from "../../utils/math";
+import {exists} from "../../utils/garnish_display";
+import {TableHighlightType} from "../../stories/types";
+
+defineEmits(['selection']);
 
 const props = withDefaults(
     defineProps<{
@@ -17,6 +21,7 @@ const props = withDefaults(
       columnStart?: number,
       rowScroll?: boolean,
       columnScroll?: boolean,
+      highlightType?: TableHighlightType,
     }>(),
     {
       selected: null,
@@ -29,6 +34,7 @@ const props = withDefaults(
       title: null,
       rowHeaders: false,
       columnHeaders: true,
+      highlightType: TableHighlightType.None,
       columns: () => []
     });
 
@@ -107,11 +113,29 @@ function handleScroll(e: WheelEvent) {
 
 function dataRowClasses(item) {
   return {
-    selected: props.selected && props.selected === item.index,
+    selected: exists(props.selected) && props.selected === item.index,
     odd: item.index % 2 === 1,
     even: item.index % 2 === 0
   };
 }
+
+function tableClasses() {
+  let classes = [];
+
+  switch (props.highlightType) {
+    case TableHighlightType.None:
+      break;
+    case TableHighlightType.Cell:
+      classes.push("highlight_cell");
+      break;
+    case TableHighlightType.Row:
+      classes.push("highlight_row");
+      break;
+  }
+
+  return classes;
+}
+
 </script>
 
 <template>
@@ -124,10 +148,11 @@ function dataRowClasses(item) {
       <td v-for="col in visibleColumns">{{ col.label || "" }}</td>
     </tr>
     </thead>
-    <tbody>
+    <tbody :class="tableClasses()">
     <tr v-for="item in visibleItems" @wheel="handleScroll" :class="dataRowClasses(item)">
       <td v-for="[index, value] in visibleColumns.entries()"
-          :class="{row_header: props.rowHeaders && index === 0}">
+          :class="{row_header: props.rowHeaders && index === 0}"
+          @click="$emit('selection', item, value.field)">
         {{ item.data[value.field] }}
       </td>
     </tr>
@@ -189,7 +214,15 @@ tbody.highlight_row > tr:hover {
   background-color: var(--highlight_color);
 }
 
+tbody.highlight_row > tr:hover > td.row_header {
+  background-color: var(--back_color);
+}
+
 tbody.highlight_cell td:hover {
   background-color: var(--highlight_color);
+}
+
+tbody.highlight_cell td.row_header:hover {
+  background-color: var(--back_color);
 }
 </style>
