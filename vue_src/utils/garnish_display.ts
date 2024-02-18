@@ -15,7 +15,7 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
     }
 
     if (exists(data["Number"])) {
-        return data["Number"]["Integer"] ? data["Number"]["Integer"] : data["Number"]["Float"]
+        return exists(data["Number"]["Integer"]) ? data["Number"]["Integer"] : data["Number"]["Float"]
     }
 
     if (exists(data["Symbol"])) {

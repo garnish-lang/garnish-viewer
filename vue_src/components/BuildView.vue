@@ -7,21 +7,18 @@ import DataTable from "./table/DataTable.vue";
 import {clamp} from "../utils/math";
 import {TableHighlightType} from "../stories/types";
 
+type InstructionRow = {
+  addr: number,
+  instruction: string,
+  data: number | null,
+  startOf: string,
+}
+
 const store = useGarnishStore();
 const selectedExpression = ref("");
 const expressionInput = ref("");
 const selectedDataAddress = ref<number | null>(null);
-const selectedInstructionAddress = ref<number | null>(null);
-
-const selectedInstruction = computed(() => {
-  if (!selectedInstructionAddress.value || !store.executionBuild) {
-    return null;
-  }
-
-  console.log(selectedInstructionAddress.value);
-
-  return store.executionBuild.runtime_data.instructions[selectedInstructionAddress.value];
-});
+const selectedInstruction = ref<InstructionRow | null>(null);
 
 const selectedData = computed(() =>
     selectedDataAddress.value && store.executionBuild ? formatData(store.executionBuild, selectedDataAddress.value!) : null
@@ -123,17 +120,15 @@ const instructionCursor = computed(() =>
 );
 
 const currentCharacterList = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.current_char_list || "" : ""
+    store.executionBuild?.runtime_data.current_char_list || ""
 );
 
 const currentByteList = computed(() =>
-    store.executionBuild ?
-        store.executionBuild.runtime_data.current_byte_list ? store.executionBuild.runtime_data.current_byte_list.join(", ") : ""
-        : ""
+    store.executionBuild?.runtime_data.current_byte_list?.join(", ") || ""
 );
 
 const currentList = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.current_list || [[], []] : [[], []]
+    store.executionBuild?.runtime_data.current_list || [[], []]
 );
 
 const jumpTable = computed(() => {
@@ -306,8 +301,7 @@ function dataSelection(row, field) {
 }
 
 function instructionSelection(row) {
-  console.log(row);
-  selectedInstructionAddress.value = row.index;
+  selectedInstruction.value = row.data;
 }
 
 </script>
@@ -367,7 +361,10 @@ function instructionSelection(row) {
         <p class="data_preview">
           <span v-if="!selectedInstruction">&nbsp;</span>
           <span v-if="selectedInstruction">
-            {{ selectedInstruction!.instruction }} {{ selectedInstruction!.data ? ` - ${selectedInstruction.data}` : "" }}
+            {{ selectedInstruction!.addr }}
+            {{ selectedInstruction!.instruction ? ` - ${selectedInstruction.instruction}` : "" }}
+            {{ selectedInstruction!.data ? ` - ${selectedInstruction.data}` : "" }}
+            {{ selectedInstruction!.startOf ? ` - ${selectedInstruction.startOf}` : "" }}
           </span>
         </p>
 
