@@ -27,7 +27,7 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
         .iter()
         .enumerate()
         .find(|(_i, v)| {
-            ![TokenType::Whitespace, TokenType::StartExpression].contains(&v.get_token_type())
+            ![TokenType::Whitespace, TokenType::StartExpression, TokenType::Subexpression].contains(&v.get_token_type())
         })
         .map(|(i, _v)| i)
         .unwrap_or(0);
@@ -36,7 +36,7 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
         .iter()
         .enumerate()
         .rfind(|(_i, v)| {
-            ![TokenType::Whitespace, TokenType::EndExpression].contains(&v.get_token_type())
+            ![TokenType::Whitespace, TokenType::EndExpression, TokenType::Subexpression].contains(&v.get_token_type())
         })
         .map(|(i, _v)| i + 1)
         .unwrap_or(expression.len());
@@ -128,6 +128,7 @@ mod annotations {
         let tokens = vec![
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("expr".to_string(), TokenType::Identifier, 0, 0),
+            LexerToken::new("\n\n".to_string(), TokenType::Subexpression, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("{".to_string(), TokenType::StartExpression, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
@@ -138,6 +139,7 @@ mod annotations {
             LexerToken::new("5".to_string(), TokenType::Number, 0, 0),
             LexerToken::new(" ".to_string(), TokenType::Whitespace, 0, 0),
             LexerToken::new("}".to_string(), TokenType::EndExpression, 0, 0),
+            LexerToken::new("\n\n".to_string(), TokenType::Subexpression, 0, 0),
         ];
 
         let parts = extract_annotation_parts(&tokens).unwrap();

@@ -9,6 +9,461 @@
               "parse_node_index": 0
             },
             {
+              "parse_node_index": 3
+            },
+            {
+              "parse_node_index": 5
+            },
+            {
+              "parse_node_index": 7
+            },
+            {
+              "parse_node_index": 6
+            },
+            {
+              "parse_node_index": 4
+            },
+            {
+              "parse_node_index": 1
+            },
+            {
+              "parse_node_index": 9
+            },
+            {
+              "parse_node_index": 11
+            },
+            {
+              "parse_node_index": 13
+            },
+            {
+              "parse_node_index": 15
+            },
+            {
+              "parse_node_index": 16
+            },
+            {
+              "parse_node_index": 14
+            },
+            {
+              "parse_node_index": 12
+            },
+            {
+              "parse_node_index": 9
+            },
+            {
+              "parse_node_index": 8
+            },
+            {
+              "parse_node_index": null
+            }
+          ],
+          "name": "tag",
+          "parse_result": {
+            "nodes": [
+              {
+                "definition": "Symbol",
+                "left": null,
+                "lex_token": {
+                  "column": 4,
+                  "row": 5,
+                  "text": ";selector",
+                  "token_type": "Symbol"
+                },
+                "parent": 1,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "Pair",
+                "left": 0,
+                "lex_token": {
+                  "column": 14,
+                  "row": 5,
+                  "text": "=",
+                  "token_type": "Pair"
+                },
+                "parent": 8,
+                "right": 2,
+                "secondary_definition": "BinaryLeftToRight"
+              },
+              {
+                "definition": "Group",
+                "left": null,
+                "lex_token": {
+                  "column": 16,
+                  "row": 5,
+                  "text": "(",
+                  "token_type": "StartGroup"
+                },
+                "parent": 1,
+                "right": 4,
+                "secondary_definition": "StartGrouping"
+              },
+              {
+                "definition": "Symbol",
+                "left": null,
+                "lex_token": {
+                  "column": 18,
+                  "row": 5,
+                  "text": ";Selector::Tag",
+                  "token_type": "Symbol"
+                },
+                "parent": 4,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "List",
+                "left": 3,
+                "lex_token": {
+                  "column": 32,
+                  "row": 5,
+                  "text": " ",
+                  "token_type": "Whitespace"
+                },
+                "parent": 2,
+                "right": 6,
+                "secondary_definition": "StartGrouping"
+              },
+              {
+                "definition": "Value",
+                "left": null,
+                "lex_token": {
+                  "column": 33,
+                  "row": 5,
+                  "text": "$",
+                  "token_type": "Value"
+                },
+                "parent": 6,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "Access",
+                "left": 5,
+                "lex_token": {
+                  "column": 34,
+                  "row": 5,
+                  "text": ".",
+                  "token_type": "Period"
+                },
+                "parent": 4,
+                "right": 7,
+                "secondary_definition": "BinaryLeftToRight"
+              },
+              {
+                "definition": "Number",
+                "left": null,
+                "lex_token": {
+                  "column": 35,
+                  "row": 5,
+                  "text": "0",
+                  "token_type": "Number"
+                },
+                "parent": 6,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "List",
+                "left": 1,
+                "lex_token": {
+                  "column": 38,
+                  "row": 5,
+                  "text": "\n    ",
+                  "token_type": "Whitespace"
+                },
+                "parent": null,
+                "right": 9,
+                "secondary_definition": "StartGrouping"
+              },
+              {
+                "definition": "PrefixApply",
+                "left": null,
+                "lex_token": {
+                  "column": 4,
+                  "row": 6,
+                  "text": "declarations_from`",
+                  "token_type": "PrefixIdentifier"
+                },
+                "parent": 8,
+                "right": 10,
+                "secondary_definition": "UnaryPrefix"
+              },
+              {
+                "definition": "Group",
+                "left": null,
+                "lex_token": {
+                  "column": 23,
+                  "row": 6,
+                  "text": "(",
+                  "token_type": "StartGroup"
+                },
+                "parent": 9,
+                "right": 12,
+                "secondary_definition": "StartGrouping"
+              },
+              {
+                "definition": "Value",
+                "left": null,
+                "lex_token": {
+                  "column": 25,
+                  "row": 6,
+                  "text": "$",
+                  "token_type": "Value"
+                },
+                "parent": 12,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "Apply",
+                "left": 11,
+                "lex_token": {
+                  "column": 27,
+                  "row": 6,
+                  "text": "~",
+                  "token_type": "Apply"
+                },
+                "parent": 10,
+                "right": 14,
+                "secondary_definition": "BinaryLeftToRight"
+              },
+              {
+                "definition": "Number",
+                "left": null,
+                "lex_token": {
+                  "column": 29,
+                  "row": 6,
+                  "text": "1",
+                  "token_type": "Number"
+                },
+                "parent": 14,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "EndExclusiveRange",
+                "left": 13,
+                "lex_token": {
+                  "column": 30,
+                  "row": 6,
+                  "text": "..<",
+                  "token_type": "EndExclusiveRange"
+                },
+                "parent": 12,
+                "right": 16,
+                "secondary_definition": "BinaryLeftToRight"
+              },
+              {
+                "definition": "Value",
+                "left": null,
+                "lex_token": {
+                  "column": 33,
+                  "row": 6,
+                  "text": "$",
+                  "token_type": "Value"
+                },
+                "parent": 16,
+                "right": null,
+                "secondary_definition": "Value"
+              },
+              {
+                "definition": "AccessLengthInternal",
+                "left": 15,
+                "lex_token": {
+                  "column": 34,
+                  "row": 6,
+                  "text": ".|",
+                  "token_type": "LengthInternal"
+                },
+                "parent": 14,
+                "right": null,
+                "secondary_definition": "UnarySuffix"
+              }
+            ],
+            "root": 8
+          },
+          "source": "root_0",
+          "start": 0,
+          "text": " tag {\n    ;selector = ( ;Selector::Tag $.0 )\n    declarations_from` ( $ ~ 1..<$.| )\n}\n\n",
+          "tokens": [
+            {
+              "column": 4,
+              "row": 5,
+              "text": ";selector",
+              "token_type": "Symbol"
+            },
+            {
+              "column": 13,
+              "row": 5,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 14,
+              "row": 5,
+              "text": "=",
+              "token_type": "Pair"
+            },
+            {
+              "column": 15,
+              "row": 5,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 16,
+              "row": 5,
+              "text": "(",
+              "token_type": "StartGroup"
+            },
+            {
+              "column": 17,
+              "row": 5,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 18,
+              "row": 5,
+              "text": ";Selector::Tag",
+              "token_type": "Symbol"
+            },
+            {
+              "column": 32,
+              "row": 5,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 33,
+              "row": 5,
+              "text": "$",
+              "token_type": "Value"
+            },
+            {
+              "column": 34,
+              "row": 5,
+              "text": ".",
+              "token_type": "Period"
+            },
+            {
+              "column": 35,
+              "row": 5,
+              "text": "0",
+              "token_type": "Number"
+            },
+            {
+              "column": 36,
+              "row": 5,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 37,
+              "row": 5,
+              "text": ")",
+              "token_type": "EndGroup"
+            },
+            {
+              "column": 38,
+              "row": 5,
+              "text": "\n    ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 4,
+              "row": 6,
+              "text": "declarations_from`",
+              "token_type": "PrefixIdentifier"
+            },
+            {
+              "column": 22,
+              "row": 6,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 23,
+              "row": 6,
+              "text": "(",
+              "token_type": "StartGroup"
+            },
+            {
+              "column": 24,
+              "row": 6,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 25,
+              "row": 6,
+              "text": "$",
+              "token_type": "Value"
+            },
+            {
+              "column": 26,
+              "row": 6,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 27,
+              "row": 6,
+              "text": "~",
+              "token_type": "Apply"
+            },
+            {
+              "column": 28,
+              "row": 6,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 29,
+              "row": 6,
+              "text": "1",
+              "token_type": "Number"
+            },
+            {
+              "column": 30,
+              "row": 6,
+              "text": "..<",
+              "token_type": "EndExclusiveRange"
+            },
+            {
+              "column": 33,
+              "row": 6,
+              "text": "$",
+              "token_type": "Value"
+            },
+            {
+              "column": 34,
+              "row": 6,
+              "text": ".|",
+              "token_type": "LengthInternal"
+            },
+            {
+              "column": 36,
+              "row": 6,
+              "text": " ",
+              "token_type": "Whitespace"
+            },
+            {
+              "column": 37,
+              "row": 6,
+              "text": ")",
+              "token_type": "EndGroup"
+            }
+          ]
+        },
+        {
+          "instruction_metadata": [
+            {
+              "parse_node_index": 0
+            },
+            {
               "parse_node_index": 10
             },
             {
@@ -1118,7 +1573,7 @@
             "root": 1
           },
           "source": "root_0",
-          "start": 0,
+          "start": 1,
           "text": " declarations_from {\n    ;declarations = ( $ 0 (,) ~> {\n        $.1 < $.0.| ^~ ($.0, $.1 + 1, $.2 <> ( $.0 ~ $.1 ~> {\n                ;property = _.$\n                ;value = ( $._ #= #\"\" ?> ( ;DeclarationValue::Basic $._ ) |> $ )\n            }))\n\n        $.2\n    })\n}",
           "tokens": [
             {
@@ -1998,7 +2453,7 @@
             "root": 0
           },
           "source": "root_0",
-          "start": 5,
+          "start": 6,
           "text": "tag` body\n    \"color\" = \"red\"\n    \"background_color\" = \"blue\"\n\n",
           "tokens": [
             {
@@ -2101,36 +2556,41 @@
         }
       ],
       "expression_map": {
-        "declarations_from": 0,
-        "root_0": 5
+        "declarations_from": 1,
+        "root_0": 6,
+        "tag": 0
       }
     },
     "runtime_data": {
       "cache": {
-        "1012284925096879317": 3,
-        "10229811332874825874": 12,
-        "13613036530279383050": 16,
-        "14094906457557537107": 6,
+        "1012284925096879317": 8,
+        "10229811332874825874": 15,
+        "13613036530279383050": 19,
+        "14094906457557537107": 7,
         "15986711503058325309": 5,
-        "16817478883951576554": 11,
-        "17637262340144512087": 18,
-        "3977294591157875868": 4,
-        "4579117943818756536": 15,
-        "46226426878474768": 9,
-        "5142909573123414944": 14,
-        "6142108999244625671": 8,
-        "6315582007884685131": 10,
-        "8618848079536674192": 13,
-        "8823101049024222982": 7,
-        "9278563182393694213": 17
+        "16817478883951576554": 14,
+        "17637262340144512087": 21,
+        "3852621091441969539": 6,
+        "4579117943818756536": 18,
+        "46226426878474768": 12,
+        "5142909573123414944": 17,
+        "5564906248896189238": 11,
+        "6142108999244625671": 9,
+        "6315582007884685131": 13,
+        "7957261489475174921": 4,
+        "854672638658093467": 3,
+        "8618848079536674192": 16,
+        "8823101049024222982": 10,
+        "9278563182393694213": 20
       },
       "current_byte_list": null,
       "current_char_list": null,
       "current_list": null,
       "data": {
         "expression_to_symbol": {
-          "0": 6914144540801371000,
-          "5": 8764973126003718000
+          "0": 3694296706987556400,
+          "1": 6914144540801371000,
+          "6": 8764973126003718000
         },
         "external_to_symbol": {},
         "list": [
@@ -2138,10 +2598,10 @@
           "False",
           "True",
           {
-            "Symbol": 10155861785930813000
+            "Symbol": 2587028606942598000
           },
           {
-            "Expression": 1
+            "Symbol": 2791807397953409000
           },
           {
             "Number": {
@@ -2149,9 +2609,18 @@
             }
           },
           {
+            "Symbol": 6914144540801371000
+          },
+          {
             "Number": {
               "Integer": 1
             }
+          },
+          {
+            "Symbol": 10155861785930813000
+          },
+          {
+            "Expression": 2
           },
           {
             "Number": {
@@ -2159,7 +2628,7 @@
             }
           },
           {
-            "Expression": 2
+            "Expression": 3
           },
           {
             "Symbol": 16581682551286098000
@@ -2197,18 +2666,22 @@
           "10946163006582074207": "DeclarationValue::Basic",
           "12307815881876068756": "value",
           "16581682551286098020": "property",
+          "2587028606942598024": "selector",
+          "2791807397953408852": "Selector::Tag",
           "3694296706987556279": "tag",
-          "4339687128534038002": "body"
+          "4339687128534038002": "body",
+          "6914144540801371562": "declarations_from"
         }
       },
       "end_of_constant_data": 0,
       "expression_table": [
         0,
-        9,
-        45,
-        57,
-        60,
-        65
+        17,
+        26,
+        62,
+        74,
+        77,
+        82
       ],
       "instruction_cursor": 0,
       "instructions": [
@@ -2218,6 +2691,74 @@
         },
         {
           "data": 4,
+          "instruction": "Put"
+        },
+        {
+          "data": null,
+          "instruction": "PutValue"
+        },
+        {
+          "data": 5,
+          "instruction": "Put"
+        },
+        {
+          "data": null,
+          "instruction": "Access"
+        },
+        {
+          "data": 2,
+          "instruction": "MakeList"
+        },
+        {
+          "data": null,
+          "instruction": "MakePair"
+        },
+        {
+          "data": 6,
+          "instruction": "Resolve"
+        },
+        {
+          "data": null,
+          "instruction": "PutValue"
+        },
+        {
+          "data": 7,
+          "instruction": "Put"
+        },
+        {
+          "data": null,
+          "instruction": "PutValue"
+        },
+        {
+          "data": null,
+          "instruction": "AccessLengthInternal"
+        },
+        {
+          "data": null,
+          "instruction": "MakeEndExclusiveRange"
+        },
+        {
+          "data": null,
+          "instruction": "Apply"
+        },
+        {
+          "data": null,
+          "instruction": "Apply"
+        },
+        {
+          "data": 2,
+          "instruction": "MakeList"
+        },
+        {
+          "data": null,
+          "instruction": "EndExpression"
+        },
+        {
+          "data": 8,
+          "instruction": "Put"
+        },
+        {
+          "data": 9,
           "instruction": "Put"
         },
         {
@@ -2253,7 +2794,7 @@
           "instruction": "PutValue"
         },
         {
-          "data": 6,
+          "data": 7,
           "instruction": "Put"
         },
         {
@@ -2297,7 +2838,7 @@
           "instruction": "PutValue"
         },
         {
-          "data": 6,
+          "data": 7,
           "instruction": "Put"
         },
         {
@@ -2305,7 +2846,7 @@
           "instruction": "Access"
         },
         {
-          "data": 6,
+          "data": 7,
           "instruction": "Put"
         },
         {
@@ -2317,7 +2858,7 @@
           "instruction": "PutValue"
         },
         {
-          "data": 7,
+          "data": 10,
           "instruction": "Put"
         },
         {
@@ -2325,7 +2866,7 @@
           "instruction": "Access"
         },
         {
-          "data": 8,
+          "data": 11,
           "instruction": "Put"
         },
         {
@@ -2345,7 +2886,7 @@
           "instruction": "PutValue"
         },
         {
-          "data": 6,
+          "data": 7,
           "instruction": "Put"
         },
         {
@@ -2369,7 +2910,7 @@
           "instruction": "MakeList"
         },
         {
-          "data": 1,
+          "data": 2,
           "instruction": "Reapply"
         },
         {
@@ -2381,7 +2922,7 @@
           "instruction": "PutValue"
         },
         {
-          "data": 7,
+          "data": 10,
           "instruction": "Put"
         },
         {
@@ -2393,7 +2934,7 @@
           "instruction": "EndExpression"
         },
         {
-          "data": 9,
+          "data": 12,
           "instruction": "Put"
         },
         {
@@ -2409,7 +2950,7 @@
           "instruction": "MakePair"
         },
         {
-          "data": 10,
+          "data": 13,
           "instruction": "Put"
         },
         {
@@ -2421,7 +2962,7 @@
           "instruction": "AccessRightInternal"
         },
         {
-          "data": 11,
+          "data": 14,
           "instruction": "Put"
         },
         {
@@ -2433,7 +2974,7 @@
           "instruction": "TypeEqual"
         },
         {
-          "data": 4,
+          "data": 5,
           "instruction": "JumpIfTrue"
         },
         {
@@ -2453,7 +2994,7 @@
           "instruction": "EndExpression"
         },
         {
-          "data": 12,
+          "data": 15,
           "instruction": "Put"
         },
         {
@@ -2469,23 +3010,23 @@
           "instruction": "MakeList"
         },
         {
-          "data": 3,
+          "data": 4,
           "instruction": "JumpTo"
         },
         {
-          "data": 13,
+          "data": 16,
           "instruction": "Resolve"
         },
         {
-          "data": 14,
+          "data": 17,
           "instruction": "Resolve"
         },
         {
-          "data": 15,
+          "data": 18,
           "instruction": "Put"
         },
         {
-          "data": 16,
+          "data": 19,
           "instruction": "Put"
         },
         {
@@ -2493,11 +3034,11 @@
           "instruction": "MakePair"
         },
         {
-          "data": 17,
+          "data": 20,
           "instruction": "Put"
         },
         {
-          "data": 18,
+          "data": 21,
           "instruction": "Put"
         },
         {

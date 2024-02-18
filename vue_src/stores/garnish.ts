@@ -78,7 +78,7 @@ export const useGarnishStore = defineStore("garnish", () => {
 
         garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
             if (info) {
-                console.log(JSON.stringify(info)); // easy way to get data for web dev
+                // console.log(JSON.stringify(info)); // easy way to get data for web dev
                 executionBuild.value = info;
             }
         });

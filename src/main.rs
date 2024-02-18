@@ -13,7 +13,6 @@ use garnish_lang_compiler::{
 };
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
 use garnish_traits::{GarnishLangRuntimeData, GarnishRuntime};
-use log::{debug, error};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -172,7 +171,7 @@ fn handle_def_annotations(
         let (parsed, instruction_data, expression_index) =
             match build_and_get_parameters(annotation_parts.expression, runtime) {
                 Err(s) => {
-                    error!("{}", s);
+                    println!("{}", s);
                     continue;
                 }
                 Ok(v) => v,
@@ -188,7 +187,7 @@ fn handle_def_annotations(
             instruction_metadata: instruction_data,
         });
 
-        debug!("Found method: {}", name);
+        println!("Found method: {}", name);
         runtime.get_data_mut().get_data_mut().insert_expression(
             expression_index,
             symbol_value(&annotation_parts.name_token.get_text()),
