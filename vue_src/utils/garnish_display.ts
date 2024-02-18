@@ -25,7 +25,7 @@ export const formatData = (buildInfo: BuildInfo, dataAddr: number): string => {
         // which is too large for JS numbers
         // however, numbers used as keys for maps in Rust are converted to string before number downcast
         // meaning a symbol value (downcast number) will not equal a map key (number converted to string)
-        // casting the key will downcast number same way sym values were, allowing proper comparison5
+        // casting the key will downcast number same way sym values were, allowing proper comparison
         for (const key of Object.keys(buildInfo.runtime_data.data.symbol_to_name)) {
             if (sym === parseInt(key)) {
                 return `;${buildInfo.runtime_data.data.symbol_to_name[key]}`;
