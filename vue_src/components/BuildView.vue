@@ -5,12 +5,20 @@ import {computed, ref} from "vue";
 import {formatData} from "../utils/garnish_display";
 import {it} from "vitest";
 import DataTable from "./table/DataTable.vue";
+import {clamp} from "../utils/math";
 
 const store = useGarnishStore();
 const selectedExpression = ref("");
 const expressionInput = ref("");
 
 const canStart = computed(() => selectedExpression.value !== "" && !store.requestedExecution);
+
+const instructionLimit = 20;
+const instructionStart = computed(() =>
+    clamp((store.executionBuild?.runtime_data.instruction_cursor || 0) - instructionLimit / 2,
+        0,
+        store.executionBuild?.runtime_data.instructions.length || 0)
+);
 
 const instructions = computed(() => {
   if (!store.executionBuild) {
@@ -95,7 +103,7 @@ const availableExpressions = computed(() =>
 );
 
 const instructionCursor = computed(() =>
-    store.executionBuild ? store.executionBuild.runtime_data.instruction_cursor : 0
+    store.executionBuild?.runtime_data.instruction_cursor || 0
 );
 
 const currentCharacterList = computed(() =>
@@ -335,11 +343,14 @@ function continueExecution() {
                    :columns="[{field: 'value', label: ''}]"
                    :column-headers="false"
                    :data="[{'value': instructionCursor}]"/>
+
         <DataTable title="Instructions"
                    :data="instructions"
+                   :selected="instructionCursor"
                    :columns="instructionColumns"
                    :row-headers="true"
-                   :row-limit="20"
+                   :row-start="instructionStart"
+                   :row-limit="instructionLimit"
                    :row-scroll="true"/>
       </section>
       <section class="data_table">

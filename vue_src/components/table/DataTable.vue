@@ -7,6 +7,7 @@ const props = withDefaults(
     defineProps<{
       title?: string,
       data: any[],
+      selected?: number,
       rowHeaders?: boolean,
       columnHeaders?: boolean,
       columns?: { field?: string, label?: string }[],
@@ -18,6 +19,7 @@ const props = withDefaults(
       columnScroll?: boolean,
     }>(),
     {
+      selected: null,
       rowLimit: null,
       rowScroll: false,
       columnLimit: null,
@@ -37,7 +39,7 @@ const trueRowLimit = computed(() => props.rowLimit || props.data.length || 0);
 const trueColumnLimit = computed(() => props.columnLimit || props.columns.length || 0);
 
 const visibleItems = computed(() => {
-  let start = (props.rowStart || 0)  + currentScrollRow.value;
+  let start = (props.rowStart || 0) + currentScrollRow.value;
   const maxStart = Math.max(props.data.length - trueRowLimit.value, 0);
   start = clamp(start, 0, maxStart);
 
@@ -102,6 +104,14 @@ function handleScroll(e: WheelEvent) {
     }
   }
 }
+
+function dataRowClasses(item) {
+  return {
+    selected: props.selected && props.selected === item.index,
+    odd: item.index % 2 === 1,
+    even: item.index % 2 === 0
+  };
+}
 </script>
 
 <template>
@@ -115,7 +125,7 @@ function handleScroll(e: WheelEvent) {
     </tr>
     </thead>
     <tbody>
-    <tr v-for="item in visibleItems" @wheel="handleScroll" :class="{odd: item.index % 2 === 1, even: item.index % 2 === 0}">
+    <tr v-for="item in visibleItems" @wheel="handleScroll" :class="dataRowClasses(item)">
       <td v-for="[index, value] in visibleColumns.entries()"
           :class="{row_header: props.rowHeaders && index === 0}">
         {{ item.data[value.field] }}
@@ -164,6 +174,14 @@ tr.even {
 }
 
 tr.odd {
+  background-color: var(--back_color);
+}
+
+tr.selected {
+  background-color: var(--highlight_color);
+}
+
+tr.selected > td.row_header {
   background-color: var(--back_color);
 }
 
