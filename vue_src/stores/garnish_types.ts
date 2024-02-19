@@ -3,6 +3,11 @@ export type SourceInfo = {
     text: string,
 }
 
+export type FormattedData = {
+    simple: string,
+    detailed: string,
+}
+
 export type BuildInfo = {
     source_tokens: { [key: string]: LexerToken[]}
     all_lexer_tokens: LexerToken[],

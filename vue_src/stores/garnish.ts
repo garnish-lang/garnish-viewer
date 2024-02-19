@@ -1,16 +1,22 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
 import {invoke} from '@tauri-apps/api'
-import type {BuildInfo, ExecutionInfo, SourceInfo} from "./garnish_types";
+import type {BuildInfo, ExecutionInfo, FormattedData, SourceInfo} from "./garnish_types";
 import {mockBuildData, mockExecutionData} from "./mock_data";
 import data from '../mock_db/execution_db.json'
+import {exists} from "../utils/general";
 
+
+type InitializationInfo = {
+    buildInfo: BuildInfo,
+    formattedData: string[]
+};
 
 async function tauriInvokeOr<T>(cmd: string, mock_data: T, args: any = undefined): Promise<T | null> {
     if (window.__TAURI_IPC__) {
         try {
             let result: T = await invoke(cmd, args);
-            console.log(result);
+            // console.log(result);
             return result;
         } catch (e) {
             console.log(e);
@@ -26,8 +32,18 @@ async function garnishBuild(input: string): Promise<BuildInfo | null> {
     return await tauriInvokeOr("build", mockBuildData(), {name: "default", input: input});
 }
 
-async function garnishInitializeExecution(sources: SourceInfo[]): Promise<BuildInfo | null> {
-    return await tauriInvokeOr("initialize_execution", data[0], {sources: sources});
+async function garnishInitializeExecution(sources: SourceInfo[]): Promise<InitializationInfo | null> {
+    let buildInfo = await tauriInvokeOr("initialize_execution", data[0], {sources: sources});
+
+    let formattedData = []
+    for (let i = 0; i < buildInfo.runtime_data.data.list.length; i++) {
+        formattedData[i] = await garnishFormatValue(i) || "";
+    }
+
+    return {
+        buildInfo,
+        formattedData
+    }
 }
 
 async function garnishGetExecutionBuild(): Promise<BuildInfo | null> {
@@ -45,6 +61,15 @@ async function garnishContinueExecution(): Promise<ExecutionInfo | null> {
     return await tauriInvokeOr("continue_execution", mockExecutionData());
 }
 
+async function garnishFormatValue(addr: number): Promise<FormattedData | null> {
+    return await tauriInvokeOr("format_value",
+        {
+            simple: "[Mock context cannot format]",
+            detailed: "[Mock context cannot format]"
+        },
+        {addr});
+}
+
 export const useGarnishStore = defineStore("garnish", () => {
     const builds = ref<BuildInfo[]>([]);
     const executionBuild = ref<BuildInfo | null>(null);
@@ -58,6 +83,7 @@ export const useGarnishStore = defineStore("garnish", () => {
     });
     const requestedExecution = ref(false);
     const currentlyExecuting = ref(false);
+    const formattedDataCache = ref([]);
 
     function buildSource(index: number) {
         garnishBuild(sources[index]).then((info: BuildInfo) => {
@@ -75,11 +101,15 @@ export const useGarnishStore = defineStore("garnish", () => {
                 text: sources.value[i]
             })
         }
+        requestedExecution.value = false;
+        currentlyExecuting.value = false;
+        formattedDataCache.value = [];
 
-        garnishInitializeExecution(sourceInfos).then((info: BuildInfo) => {
+        garnishInitializeExecution(sourceInfos).then((info: InitializationInfo) => {
             if (info) {
-                // console.log(JSON.stringify(info)); // easy way to get data for web dev
-                executionBuild.value = info;
+                // console.log(JSON.stringify(info.buildInfo)); // easy way to get data for web dev
+                executionBuild.value = info.buildInfo;
+                formattedDataCache.value = info.formattedData;
             }
         });
     }
@@ -121,6 +151,17 @@ export const useGarnishStore = defineStore("garnish", () => {
         });
     }
 
+    function formatValue(addr: number) {
+        console.log(formattedDataCache.value);
+        if (exists(formattedDataCache.value[addr])) {
+            return formattedDataCache.value[addr];
+        }
+
+        garnishFormatValue(addr).then((s: FormattedData) => {
+            formattedDataCache.value[addr] = s;
+        });
+    }
+
     function updateSource(index: number, source: string) {
         sources.value[index] = source;
     }
@@ -141,6 +182,7 @@ export const useGarnishStore = defineStore("garnish", () => {
         config,
         builds,
         executionBuild,
+        formattedDataCache,
         file_input,
         sources,
         activeOutputTab,
@@ -155,6 +197,7 @@ export const useGarnishStore = defineStore("garnish", () => {
         initializeExecution,
         startExecution,
         continueExecution,
+        formatValue,
         getExecutionBuild
     }
 })

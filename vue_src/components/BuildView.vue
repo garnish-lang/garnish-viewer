@@ -2,10 +2,10 @@
 
 import {useGarnishStore} from "../stores/garnish";
 import {computed, ref} from "vue";
-import {formatData} from "../utils/garnish_display";
 import DataTable from "./table/DataTable.vue";
 import {clamp} from "../utils/math";
 import {TableHighlightType} from "../stories/types";
+import {exists} from "../utils/general";
 
 type InstructionRow = {
   addr: number,
@@ -20,9 +20,14 @@ const expressionInput = ref("");
 const selectedDataAddress = ref<number | null>(null);
 const selectedInstruction = ref<InstructionRow | null>(null);
 
-const selectedData = computed(() =>
-    selectedDataAddress.value && store.executionBuild ? formatData(store.executionBuild, selectedDataAddress.value!) : null
-);
+const selectedData = computed(() => {
+  console.log('computing', selectedDataAddress.value);
+  if (exists(selectedDataAddress.value)) {
+    return store.formattedDataCache[selectedDataAddress.value]?.detailed || "[No formatted data available]";
+  }
+
+  return "[No Data Selected]";
+});
 
 const canStart = computed(() => selectedExpression.value !== "" && !store.requestedExecution);
 
@@ -83,8 +88,8 @@ const dataRows = computed(() => {
 
     for (let j = 0; j < store.config.buildDataRowWidth; j++) {
       const addr = i * store.config.buildDataRowWidth + j;
-      if (data[addr]) {
-        row[j] = formatData(store.executionBuild!, addr);
+      if (exists(store.executionBuild?.runtime_data.data.list[addr])) {
+        row[j] = store.formattedDataCache[addr]?.simple || "[No formatted data available]";
       } else {
         row[j] = "";
       }
@@ -297,7 +302,11 @@ function continueExecution() {
 }
 
 function dataSelection(row, field) {
-  selectedDataAddress.value = row.index * 10 + parseInt(field);
+  console.log('selection', row, field);
+  let addr = row.index * 10 + parseInt(field);
+  console.log(addr);
+  selectedDataAddress.value = addr;
+  store.formatValue(addr);
 }
 
 function instructionSelection(row) {

@@ -2,8 +2,8 @@
 
 import {computed, ref} from "vue";
 import {clamp} from "../../utils/math";
-import {exists} from "../../utils/garnish_display";
 import {TableHighlightType} from "../../stories/types";
+import {exists} from "../../utils/general";
 
 defineEmits(['selection']);
 
@@ -192,6 +192,8 @@ td, th {
   padding: .4rem .5rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-wrap: none;
+  white-space: nowrap;
 }
 
 tr.even {
