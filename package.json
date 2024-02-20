@@ -16,6 +16,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@storybook/testing-library": "^0.2.2",
     "@tauri-apps/api": "^1.5.3",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
@@ -28,7 +29,9 @@
     "@storybook/addon-interactions": "^7.6.16",
     "@storybook/addon-links": "^7.6.16",
     "@storybook/blocks": "^7.6.16",
+    "@storybook/jest": "^0.2.3",
     "@storybook/test": "^7.6.16",
+    "@storybook/test-runner": "^0.16.0",
     "@storybook/vue3": "^7.6.16",
     "@storybook/vue3-vite": "^7.6.16",
     "@tsconfig/node20": "^20.1.2",
