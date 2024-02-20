@@ -35,7 +35,13 @@ const pageWindow = computed(() => {
   }
 
   return pages;
-})
+});
+
+function itemClasses(item) {
+  return {
+    selected: item === props.selected
+  }
+}
 
 </script>
 
@@ -52,7 +58,7 @@ const pageWindow = computed(() => {
         @click="$emit('previousClicked')">
       <span>⮜</span>
     </li>
-    <li v-for="p in pageWindow" @click="$emit('itemClicked', p)">
+    <li v-for="p in pageWindow" @click="$emit('itemClicked', p)" :class="itemClasses(p)">
       <span>{{ p }}</span>
     </li>
     <li v-if="nextVisible"
@@ -60,7 +66,7 @@ const pageWindow = computed(() => {
         @click="$emit('nextClicked')">
       <span>⮞</span>
     </li>
-    <li v-if="nextVisible"
+    <li v-if="showToEnd"
         :class="{disabled: !nextEnabled}"
         @click="$emit('toEnd')">
       <span>⮞⮞</span>
@@ -100,6 +106,10 @@ ol > li:active {
 
 ol > li.disabled {
   background-color: var(--accent_color);
+}
+
+ol > li.selected {
+  background-color: var(--active_color);
 }
 
 ol > li > span {

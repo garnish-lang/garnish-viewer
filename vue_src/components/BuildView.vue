@@ -6,6 +6,7 @@ import DataTable from "./shared/DataTable.vue";
 import {clamp} from "../utils/math";
 import {TableHighlightType} from "../stories/types";
 import {exists} from "../utils/general";
+import PageNav from "./shared/PageNav.vue";
 
 type InstructionRow = {
   addr: number,
@@ -19,6 +20,8 @@ const selectedExpression = ref("");
 const expressionInput = ref("");
 const selectedDataAddress = ref<number | null>(null);
 const selectedInstruction = ref<InstructionRow | null>(null);
+
+const executionRecordDetailsVisible = computed(() => store.executionFrames.length > 0);
 
 const selectedData = computed(() => {
   console.log('computing', selectedDataAddress.value);
@@ -313,6 +316,36 @@ function instructionSelection(row) {
   selectedInstruction.value = row.data;
 }
 
+function recordAndExecute() {
+  store.executeAndRecord(selectedExpression.value, expressionInput.value);
+}
+
+function updateExecutionFrame(index) {
+  store.setExecutionFrameAsBuild(index);
+}
+
+function updateToNextExecutionFrame() {
+  if (store.currentExecutionFrame < store.executionFrames.length - 1) {
+    store.setExecutionFrameAsBuild(store.currentExecutionFrame + 1);
+  }
+}
+
+function updateToPreviousExecutionFrame() {
+  if (store.currentExecutionFrame > 0) {
+    store.setExecutionFrameAsBuild(store.currentExecutionFrame - 1);
+  }
+}
+
+function updateToStartExecutionFrame() {
+  store.setExecutionFrameAsBuild(0);
+}
+
+function updateToEndExecutionFrame() {
+  if (store.executionFrames.length > 0) {
+    store.setExecutionFrameAsBuild(store.executionFrames.length - 1);
+  }
+}
+
 </script>
 
 <template>
@@ -328,29 +361,25 @@ function instructionSelection(row) {
 
         </textarea>
         <button @click="startExecution" :disabled="!canStart" v-if="!store.currentlyExecuting">Start</button>
+        <button @click="recordAndExecute" :disabled="!canStart" v-if="!store.currentlyExecuting">Execute & Record</button>
         <button @click="continueExecution" :disabled="store.requestedExecution" v-if="store.currentlyExecuting">
           Continue
         </button>
       </nav>
+      <section class="recording_details" v-if="executionRecordDetailsVisible">
+        <PageNav :page-count="store.executionFrames.length"
+                 :show-to-start="true"
+                 :show-to-end="true"
+                 :limit="20"
+                 :selected="store.currentExecutionFrame"
+                 @next-clicked="updateToNextExecutionFrame"
+                 @previous-clicked="updateToPreviousExecutionFrame"
+                 @to-start="updateToStartExecutionFrame"
+                 @to-end="updateToEndExecutionFrame"
+                 @item-clicked="updateExecutionFrame"/>
+      </section>
       <section class="execution_details">
         <section>
-
-          <DataTable title="Current Character List"
-                     :columns="[{field: 'value', label: ''}]"
-                     :column-headers="false"
-                     :data="[{'value': currentCharacterList || '&nbsp;'}]"/>
-
-          <DataTable title="Current Byte List"
-                     :columns="[{field: 'value', label: ''}]"
-                     :column-headers="false"
-                     :data="[{'value': currentByteList || '&nbsp;'}]"/>
-
-          <DataTable title="Current List"
-                     :columns="currentListInfo.columns"
-                     :column-headers="false"
-                     :row-headers="true"
-                     :data="currentListInfo.data"/>
-
           <DataTable title="Jump Table"
                      :columns="jumpTable.columns"
                      :column-headers="false"
@@ -444,6 +473,10 @@ table {
 
 .root > section:nth-child(2) {
   align-items: start;
+}
+
+.recording_details > nav {
+  margin: .5rem;
 }
 
 .execution_options {
