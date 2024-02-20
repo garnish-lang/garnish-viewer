@@ -4,7 +4,7 @@ import 'zingchart/modules-es6/zingchart-tree.min.js';
 import ZingChartVue from "zingchart-vue";
 import {useGarnishStore} from "../stores/garnish";
 import {computed, ref} from "vue";
-import DataTable from "./table/DataTable.vue";
+import DataTable from "./shared/DataTable.vue";
 
 const store = useGarnishStore();
 const view = ref<"table" | "chart">("table");

@@ -2,7 +2,7 @@
 
 import {useGarnishStore} from "../stores/garnish";
 import {computed, ref} from "vue";
-import DataTable from "./table/DataTable.vue";
+import DataTable from "./shared/DataTable.vue";
 import {clamp} from "../utils/math";
 import {TableHighlightType} from "../stories/types";
 import {exists} from "../utils/general";
