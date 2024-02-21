@@ -24,9 +24,9 @@ const visibleStart = computed(() => clamp(props.selected - (truePageLimit.value/
 const visibleEnd = computed(() => Math.min(visibleStart.value + truePageLimit.value, props.pageCount));
 
 const previousVisible = computed(() => exists(props.limit));
-const previousEnabled = computed(() => visibleStart.value > 0);
+const previousEnabled = computed(() => props.selected > 0);
 const nextVisible = computed(() => exists(props.limit));
-const nextEnabled = computed(() => visibleEnd.value < props.pageCount);
+const nextEnabled = computed(() => props.selected < props.pageCount - 1);
 
 const pageWindow = computed(() => {
   let pages = [];
