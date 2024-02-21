@@ -327,11 +327,14 @@ function continueExecution() {
 }
 
 function dataSelection(row, field) {
-  console.log('selection', row, field);
   let addr = row.index * 10 + parseInt(field);
-  console.log(addr);
   selectedDataAddress.value = addr;
   store.formatValue(addr);
+}
+
+function valueRegisterSelection(row, field) {
+  selectedDataAddress.value = row.data.address;
+  store.formatValue(row.data.address);
 }
 
 function instructionSelection(row) {
@@ -401,6 +404,9 @@ function updateToEndExecutionFrame() {
                  @to-end="updateToEndExecutionFrame"
                  @item-clicked="updateExecutionFrame"/>
       </section>
+      <p class="data_preview">
+        {{ selectedData || "&nbsp;" }}
+      </p>
       <section class="execution_details">
         <section>
           <DataTable title="Jump Table"
@@ -422,7 +428,10 @@ function updateToEndExecutionFrame() {
                      :columns="values.columns"
                      :column-limit="10"
                      :row-headers="true"
-                     :data="values.data"/>
+                     :reverse-rows="true"
+                     :data="values.data"
+                     :highlight-type="TableHighlightType.Row"
+                     @selection="valueRegisterSelection"/>
         </section>
 
         <section>
@@ -430,7 +439,10 @@ function updateToEndExecutionFrame() {
                      :columns="registers.columns"
                      :column-limit="10"
                      :row-headers="true"
-                     :data="registers.data"/>
+                     :reverse-rows="true"
+                     :data="registers.data"
+                     :highlight-type="TableHighlightType.Row"
+                     @selection="valueRegisterSelection"/>
         </section>
       </section>
     </section>
@@ -463,9 +475,6 @@ function updateToEndExecutionFrame() {
                    @selection="instructionSelection"/>
       </section>
       <section class="data_table">
-        <p class="data_preview">
-          {{ selectedData || "&nbsp;" }}
-        </p>
         <DataTable title="Data"
                    :data="dataRows"
                    :highlight-type="TableHighlightType.Cell"
@@ -527,6 +536,17 @@ table {
   margin-left: .5rem;
 }
 
+.execution_details > section:last-child {
+  flex-grow: 1;
+  flex-basis: 0;
+  margin-right: .5rem;
+}
+
+.execution_details table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .execution_details > section:nth-child(2) {
   display: flex;
   flex-direction: row;
@@ -570,7 +590,7 @@ table {
 
 .data_preview {
   background-color: var(--edit_color);
-  margin-bottom: .5rem;
+  margin: .5rem;
   padding: .5rem;
 }
 

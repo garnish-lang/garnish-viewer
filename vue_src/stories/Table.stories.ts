@@ -132,3 +132,12 @@ export const ColumnsScroll: Story = {
         columnScroll: true,
     },
 };
+
+export const ReverseRows: Story = {
+    args: {
+        data: data,
+        rowHeaders: true,
+        reverseRows: true,
+        columns: columns
+    },
+};

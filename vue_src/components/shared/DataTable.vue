@@ -21,6 +21,7 @@ const props = withDefaults(
       columnStart?: number,
       rowScroll?: boolean,
       columnScroll?: boolean,
+      reverseRows?: boolean,
       highlightType?: TableHighlightType,
     }>(),
     {
@@ -34,6 +35,7 @@ const props = withDefaults(
       title: null,
       rowHeaders: false,
       columnHeaders: true,
+      reverseRows: false,
       highlightType: TableHighlightType.None,
       columns: () => []
     });
@@ -57,6 +59,10 @@ const visibleItems = computed(() => {
       index: i,
       data: props.data[i]
     })
+  }
+
+  if (props.reverseRows) {
+    items.reverse();
   }
 
   return items;
