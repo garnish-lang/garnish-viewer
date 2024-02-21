@@ -116,7 +116,7 @@ async function garnishRecordExecution(
     let all = [start];
     let lastDataSize = start.runtime_data.data.list.length;
 
-    while (current.runtime_data.instruction_cursor < current.runtime_data.instructions.length - 1) {
+    while (current.runtime_data.instruction_cursor < current.runtime_data.instructions.length) {
         console.log(`making frame ${all.length} [${current.runtime_data.instruction_cursor} < ${current.runtime_data.instructions.length}`);
         let nextExec = await garnishContinueExecution();
 
