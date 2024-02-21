@@ -192,52 +192,74 @@ const jumpPath = computed(() => {
 });
 
 const registers = computed(() => {
-  let columns = [{
-    field: "row",
-    label: '',
-  }];
+  let columns = [
+    {
+      field: "index",
+      label: "Index",
+    },
+    {
+      field: "address",
+      label: "Address",
+    },
+    {
+      field: "value",
+      label: "Value",
+    }
+  ];
 
-  let addressRow = {row: "Address"};
+
+  let rows = [];
 
   if (store.executionBuild) {
     for (let i = 0; i < store.executionBuild.runtime_data.register.length; i++) {
-      columns.push({
-        field: `${i}`,
-        label: `${i}`
-      });
-
-      addressRow[`${i}`] = store.executionBuild.runtime_data.register[i];
+      let addr = store.executionBuild.runtime_data.register[i];
+      rows.push({
+        index: i,
+        address: addr,
+        value: store.formattedDataCache[addr]?.simple || "[No formatted data available]"
+      })
     }
   }
 
   return {
     columns,
-    data: [addressRow]
+    data: rows
   }
 });
 
 const values = computed(() => {
-  let columns = [{
-    field: "row",
-    label: '',
-  }];
+  let columns = [
+    {
+      field: "index",
+      label: "Index",
+    },
+    {
+      field: "address",
+      label: "Address",
+    },
+    {
+      field: "value",
+      label: "Value",
+    }
+  ];
 
-  let addressRow = {row: "Address"};
+
+  let rows = [];
 
   if (store.executionBuild) {
     for (let i = 0; i < store.executionBuild.runtime_data.values.length; i++) {
-      columns.push({
-        field: `${i}`,
-        label: `${i}`
-      });
-
-      addressRow[`${i}`] = store.executionBuild.runtime_data.values[i];
+      let addr = store.executionBuild.runtime_data.values[i];
+      rows.push({
+        index: i,
+        address: addr,
+        value: store.formattedDataCache[addr]?.simple || "[No formatted data available]"
+      })
     }
   }
 
   return {
     columns,
-    data: [addressRow]
+    data: rows
   }
 });
 
@@ -361,7 +383,8 @@ function updateToEndExecutionFrame() {
 
         </textarea>
         <button @click="startExecution" :disabled="!canStart" v-if="!store.currentlyExecuting">Start</button>
-        <button @click="recordAndExecute" :disabled="!canStart" v-if="!store.currentlyExecuting">Execute & Record</button>
+        <button @click="recordAndExecute" :disabled="!canStart" v-if="!store.currentlyExecuting">Execute & Record
+        </button>
         <button @click="continueExecution" :disabled="store.requestedExecution" v-if="store.currentlyExecuting">
           Continue
         </button>
@@ -383,14 +406,31 @@ function updateToEndExecutionFrame() {
           <DataTable title="Jump Table"
                      :columns="jumpTable.columns"
                      :column-headers="false"
+                     :column-limit="10"
                      :row-headers="true"
                      :data="jumpTable.data"/>
 
           <DataTable title="Jump Path"
                      :columns="jumpPath.columns"
                      :column-headers="false"
+                     :column-limit="10"
                      :row-headers="true"
                      :data="jumpPath.data"/>
+        </section>
+        <section>
+          <DataTable title="Values"
+                     :columns="values.columns"
+                     :column-limit="10"
+                     :row-headers="true"
+                     :data="values.data"/>
+        </section>
+
+        <section>
+          <DataTable title="Registers"
+                     :columns="registers.columns"
+                     :column-limit="10"
+                     :row-headers="true"
+                     :data="registers.data"/>
         </section>
       </section>
     </section>
@@ -426,21 +466,6 @@ function updateToEndExecutionFrame() {
         <p class="data_preview">
           {{ selectedData || "&nbsp;" }}
         </p>
-
-        <DataTable title="Values"
-                   :columns="values.columns"
-                   :column-headers="false"
-                   :column-limit="10"
-                   :row-headers="true"
-                   :data="values.data"/>
-
-        <DataTable title="Registers"
-                   :columns="registers.columns"
-                   :column-headers="false"
-                   :column-limit="10"
-                   :row-headers="true"
-                   :data="registers.data"/>
-
         <DataTable title="Data"
                    :data="dataRows"
                    :highlight-type="TableHighlightType.Cell"
