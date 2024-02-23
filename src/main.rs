@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::sync::Mutex;
-use garnish_utils::{complex_expression_data_format, format_char_list, simple_expression_data_format};
+use garnish_lang_utilities::{complex_expression_data_format, format_char_list, simple_expression_data_format};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BuildInfo {

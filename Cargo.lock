@@ -819,7 +819,7 @@ dependencies = [
  "garnish_lang_runtime",
  "garnish_lang_simple_data",
  "garnish_lang_traits",
- "garnish_utils",
+ "garnish_lang_utilities",
  "log",
  "serde",
  "serde_json",
@@ -869,7 +869,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "garnish_utils"
+name = "garnish_lang_utilities"
 version = "0.1.0"
 dependencies = [
  "garnish_lang_compiler",

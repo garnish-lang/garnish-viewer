@@ -1,6 +1,6 @@
 use garnish_lang_simple_data::{DataError, SimpleRuntimeData};
 use garnish_lang_traits::{GarnishLangRuntimeContext, GarnishLangRuntimeData, RuntimeError};
-use garnish_utils::{DataInfoProvider};
+use garnish_lang_utilities::{DataInfoProvider};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use crate::ExpressionBuildInfo;
