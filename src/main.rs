@@ -7,12 +7,12 @@ mod context;
 use crate::compile::extract_annotation_parts;
 use crate::context::ViewerContext;
 use garnish_annotations_collector::{Collector, Sink, TokenBlock};
-use garnish_data::{symbol_value, SimpleRuntimeData};
+use garnish_lang_simple_data::{symbol_value, SimpleRuntimeData};
 use garnish_lang_compiler::{
     build_with_data, lex, parse, InstructionMetadata, LexerToken, ParseResult, TokenType,
 };
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
-use garnish_traits::{GarnishLangRuntimeData, GarnishRuntime};
+use garnish_lang_traits::{GarnishLangRuntimeData, GarnishRuntime};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ops::Deref;

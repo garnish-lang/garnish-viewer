@@ -18,8 +18,8 @@ garnish_annotations_collector = { path = "../garnish-annotations-collector" }
 garnish_utils = { path = "../garnish-utils"}
 garnish_lang_runtime = { path = "../garnish-core/runtime", features = ["serde"] }
 garnish_lang_compiler = { path = "../garnish-core/compiler", features = ["serde"] }
-garnish_data = { path = "../garnish-core/data", features = ["serde"] }
-garnish_traits = { path = "../garnish-core/traits", features = ["serde"] }
+garnish_lang_simple_data = { path = "../garnish-core/data", features = ["serde"] }
+garnish_lang_traits = { path = "../garnish-core/traits", features = ["serde"] }
 log = "0.4.20"
 
 [features]

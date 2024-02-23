@@ -1,5 +1,5 @@
-use garnish_data::{DataError, SimpleRuntimeData};
-use garnish_traits::{GarnishLangRuntimeContext, GarnishLangRuntimeData, RuntimeError};
+use garnish_lang_simple_data::{DataError, SimpleRuntimeData};
+use garnish_lang_traits::{GarnishLangRuntimeContext, GarnishLangRuntimeData, RuntimeError};
 use garnish_utils::{DataInfoProvider};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
