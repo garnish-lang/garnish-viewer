@@ -14,7 +14,7 @@ tauri-build = { version = "1.5", features = [] }
 tauri = { version = "1.5", features = ["shell-open"] }
 serde = { version = "1.0.196", features = ["derive"] }
 serde_json = "1.0"
-garnish_annotations_collector = { path = "../garnish-annotations-collector" }
+garnish_lang_annotations_collector = { path = "../garnish-annotations-collector" }
 garnish_utils = { path = "../garnish-utils"}
 garnish_lang_runtime = { path = "../garnish-core/runtime", features = ["serde"] }
 garnish_lang_compiler = { path = "../garnish-core/compiler", features = ["serde"] }
