@@ -1,5 +1,5 @@
-use garnish_lang_simple_data::{DataError, SimpleRuntimeData};
-use garnish_lang_traits::{GarnishLangRuntimeContext, GarnishLangRuntimeData, RuntimeError};
+use garnish_lang_simple_data::{DataError, SimpleGarnishData};
+use garnish_lang_traits::{GarnishContext, GarnishData, RuntimeError};
 use garnish_lang_utilities::{DataInfoProvider};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
@@ -36,11 +36,11 @@ impl ViewerContext {
     }
 }
 
-impl GarnishLangRuntimeContext<SimpleRuntimeData> for ViewerContext {
+impl GarnishContext<SimpleGarnishData> for ViewerContext {
     fn resolve(
         &mut self,
         symbol: u64,
-        data: &mut SimpleRuntimeData,
+        data: &mut SimpleGarnishData,
     ) -> Result<bool, RuntimeError<DataError>> {
         match data.get_symbols().get(&symbol) {
             None => Ok(false),
@@ -56,12 +56,12 @@ impl GarnishLangRuntimeContext<SimpleRuntimeData> for ViewerContext {
     }
 }
 
-impl DataInfoProvider<SimpleRuntimeData> for ViewerContext {
-    fn get_symbol_name(&self, sym: u64, data: &SimpleRuntimeData) -> Option<String> {
+impl DataInfoProvider<SimpleGarnishData> for ViewerContext {
+    fn get_symbol_name(&self, sym: u64, data: &SimpleGarnishData) -> Option<String> {
         data.get_data().get_symbol(sym).cloned()
     }
 
-    fn get_address_name(&self, addr: usize, data: &SimpleRuntimeData) -> Option<String> {
+    fn get_address_name(&self, addr: usize, data: &SimpleGarnishData) -> Option<String> {
         self.expression_map
             .iter()
             .map(|(k, v)| (k, data.get_jump_point(*v)))
@@ -74,7 +74,7 @@ impl DataInfoProvider<SimpleRuntimeData> for ViewerContext {
     fn format_symbol_data(
         &self,
         sym: u64,
-        data: &SimpleRuntimeData,
+        data: &SimpleGarnishData,
     ) -> Option<String> {
         data.get_data().get_symbol(sym).and_then(|sym_name| {
             self.expression_map

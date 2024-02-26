@@ -7,12 +7,12 @@ mod context;
 use crate::compile::extract_annotation_parts;
 use crate::context::ViewerContext;
 use garnish_lang_annotations_collector::{Collector, Sink, TokenBlock};
-use garnish_lang_simple_data::{symbol_value, SimpleRuntimeData};
+use garnish_lang_simple_data::{symbol_value, SimpleGarnishData};
 use garnish_lang_compiler::{
     build_with_data, lex, parse, InstructionMetadata, LexerToken, ParseResult, TokenType,
 };
 use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
-use garnish_lang_traits::{GarnishLangRuntimeData, GarnishRuntime};
+use garnish_lang_traits::{GarnishData, GarnishRuntime};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -24,7 +24,7 @@ struct BuildInfo {
     all_lexer_tokens: Vec<LexerToken>,
     source_tokens: HashMap<String, Vec<LexerToken>>,
     context: ViewerContext,
-    runtime_data: SimpleRuntimeData,
+    runtime_data: SimpleGarnishData,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -47,7 +47,7 @@ struct SourceInfo {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExecutionInfo {
     context: ViewerContext,
-    runtime: SimpleGarnishRuntime<SimpleRuntimeData>,
+    runtime: SimpleGarnishRuntime<SimpleGarnishData>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -70,7 +70,7 @@ fn build(name: Option<&str>, input: Option<&str>) -> Result<BuildInfo, String> {
 }
 
 fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
-    let mut runtime = SimpleGarnishRuntime::new(SimpleRuntimeData::new());
+    let mut runtime = SimpleGarnishRuntime::new(SimpleGarnishData::new());
     let mut context = ViewerContext::new();
 
     let source_tokens = build_input_with_context(name, input, &mut runtime, &mut context)?;
@@ -89,7 +89,7 @@ fn build_input(name: &str, input: &str) -> Result<BuildInfo, String> {
 fn build_input_with_context(
     name: &str,
     input: &str,
-    runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
+    runtime: &mut SimpleGarnishRuntime<SimpleGarnishData>,
     context: &mut ViewerContext,
 ) -> Result<Vec<LexerToken>, String> {
     let collector: Collector =
@@ -153,7 +153,7 @@ fn build_input_with_context(
 
 fn handle_def_annotations(
     blocks: Vec<TokenBlock>,
-    runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
+    runtime: &mut SimpleGarnishRuntime<SimpleGarnishData>,
     context: &mut ViewerContext,
     name: &String,
 ) -> Result<Vec<ExpressionBuildInfo>, String> {
@@ -207,7 +207,7 @@ fn handle_def_annotations(
 
 fn build_and_get_parameters(
     tokens: &[LexerToken],
-    runtime: &mut SimpleGarnishRuntime<SimpleRuntimeData>,
+    runtime: &mut SimpleGarnishRuntime<SimpleGarnishData>,
 ) -> Result<(ParseResult, Vec<InstructionMetadata>, usize), String> {
     let parsed = parse(&Vec::from(tokens))?;
     if parsed.get_nodes().is_empty() {
@@ -230,7 +230,7 @@ fn initialize_execution(
     state: tauri::State<AppState>,
 ) -> Result<BuildInfo, String> {
     let mut source_tokens = HashMap::new();
-    let mut runtime = SimpleGarnishRuntime::new(SimpleRuntimeData::new());
+    let mut runtime = SimpleGarnishRuntime::new(SimpleGarnishData::new());
     let mut context = ViewerContext::new();
 
     for source in sources {
