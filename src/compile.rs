@@ -1,4 +1,4 @@
-use garnish_lang_compiler::{LexerToken, TokenType};
+use garnish_lang_compiler::lex::{LexerToken, TokenType};
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct AnnotationParts<'a> {
@@ -50,7 +50,7 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
 #[cfg(test)]
 mod annotations {
     use crate::compile::extract_annotation_parts;
-    use garnish_lang_compiler::{LexerToken, TokenType};
+    use garnish_lang_compiler::lex::{LexerToken, TokenType};
 
     #[test]
     fn empty_gives_error() {

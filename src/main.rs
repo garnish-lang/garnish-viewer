@@ -6,18 +6,18 @@ mod context;
 
 use crate::compile::extract_annotation_parts;
 use crate::context::ViewerContext;
-use garnish_lang_annotations_collector::{Collector, Sink, TokenBlock};
+use garnish_lang_annotations_collector::{Collector, PartBehavior, PartParser, Sink, TokenBlock};
+use garnish_lang_compiler::build::{build_with_data, InstructionMetadata};
+use garnish_lang_compiler::lex::{lex, LexerToken, TokenType};
+use garnish_lang_compiler::parse::{parse, ParseResult};
+use garnish_lang_runtime::SimpleGarnishRuntime;
 use garnish_lang_simple_data::{symbol_value, SimpleGarnishData};
-use garnish_lang_compiler::{
-    build_with_data, lex, parse, InstructionMetadata, LexerToken, ParseResult, TokenType,
-};
-use garnish_lang_runtime::runtime_impls::SimpleGarnishRuntime;
 use garnish_lang_traits::{GarnishData, GarnishRuntime};
+use garnish_lang_utilities::{complex_expression_data_format, simple_expression_data_format};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::sync::Mutex;
-use garnish_lang_utilities::{complex_expression_data_format, format_char_list, simple_expression_data_format};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct BuildInfo {
@@ -92,8 +92,9 @@ fn build_input_with_context(
     runtime: &mut SimpleGarnishRuntime<SimpleGarnishData>,
     context: &mut ViewerContext,
 ) -> Result<Vec<LexerToken>, String> {
-    let collector: Collector =
-        Collector::new(vec![Sink::new("@Def").until_token(TokenType::Subexpression)]);
+    let collector: Collector = Collector::new(vec![Sink::new("@Def").part(PartParser::new(
+        PartBehavior::UntilToken(TokenType::Subexpression),
+    ))]);
 
     let tokens = lex(&input)?;
     let blocks: Vec<TokenBlock> = collector.collect_tokens(&tokens)?;
@@ -282,13 +283,12 @@ fn start_execution(
                 .and_then(|index| build.runtime.get_data().get_jump_point(index))
                 .ok_or(format!("Expression \"{}\" not found.", expression_name))?;
 
-            build.runtime
+            build
+                .runtime
                 .get_data_mut()
                 .set_instruction_cursor(start_instruction)?;
 
-            build.runtime
-                .get_data_mut()
-                .push_value_stack(0)?;
+            build.runtime.get_data_mut().push_value_stack(0)?;
 
             Ok(build.clone())
         }
@@ -327,8 +327,10 @@ fn format_value(addr: usize, state: tauri::State<AppState>) -> Result<FormattedD
         .or(Err("Could not lock base build.".to_string()))?
         .as_ref()
         .map(|exec| {
-            let simple = simple_expression_data_format(addr, exec.runtime.get_data(), &exec.context, 0);
-            let detailed = complex_expression_data_format(addr, exec.runtime.get_data(), &exec.context);
+            let simple =
+                simple_expression_data_format(addr, exec.runtime.get_data(), &exec.context, 0);
+            let detailed =
+                complex_expression_data_format(addr, exec.runtime.get_data(), &exec.context);
 
             FormattedData { simple, detailed }
         })
