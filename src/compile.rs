@@ -1,4 +1,4 @@
-use garnish_lang_compiler::lex::{LexerToken, TokenType};
+use garnish_lang::compiler::lex::{LexerToken, TokenType};
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct AnnotationParts<'a> {
@@ -23,7 +23,7 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
         return Err("No tokens in expression".to_string());
     }
 
-    let mut first = expression
+    let first = expression
         .iter()
         .enumerate()
         .find(|(_i, v)| {
@@ -32,7 +32,7 @@ pub fn extract_annotation_parts(tokens: &Vec<LexerToken>) -> Result<AnnotationPa
         .map(|(i, _v)| i)
         .unwrap_or(0);
 
-    let mut last = expression
+    let last = expression
         .iter()
         .enumerate()
         .rfind(|(_i, v)| {
